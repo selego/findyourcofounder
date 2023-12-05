@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-black text-white;
+  }
+
+  input[type="search"] {
+    @apply bg-black text-white bg-gradient-gray appearance-none p-4 pr-10 rounded-[20px] placeholder:opacity-50 text-xs w-[315px] focus:w-[450px] focus:outline-none border border-transparent focus:border-white transition-all;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="date"],
+  input[type="number"],
+  input[type="url"] {
+    @apply bg-black text-white bg-gradient-gray appearance-none px-4 lg:py-3.5 py-4 rounded-[20px] placeholder:opacity-50 text-xs lg:text-base focus:outline-none;
+  }
+
+  /* input[type="text"]:not(:focus),
+  input[type="password"]:not(:focus),
+  input[type="email"]:not(:focus),
+  input[type="date"]:not(:focus),
+  input[type="number"]:not(:focus),
+  input[type="url"]:not(:focus) {
+    color: transparent;
+  } */
+
+  input[type="date"]::before {
+    content: attr(placeholder);
+    position: absolute;
+    color: rgba(0, 0, 0, 0);
+  }
+
+  input[type="date"] {
+    color: rgba(0, 0, 0, 1);
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-0;
+  }
+}
+
+@layer components {
+  .text-shadow {
+    text-shadow: 0 0 0.1em currentColor;
+  }
+
+  .masked-skills {
+    -webkit-mask: linear-gradient(90deg, #000 90%, transparent);
+    mask: linear-gradient(90deg, #000 90%, transparent);
+  }
+
+  .mask-desc {
+    -webkit-mask: linear-gradient(#000 80%, transparent);
+    mask: linear-gradient(#000 80%, transparent);
+  }
+}
