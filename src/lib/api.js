@@ -1,4 +1,4 @@
-const ROOT_URL = process.env.NODE_ENV === "production" ? `https://findyourcofounder.es` : "http://localhost:3000";
+const ROOT_URL = process.env.NODE_ENV === "production" ? `https://findyourcofounder.nl` : "http://localhost:3000";
 
 class api {
   async get(url) {
