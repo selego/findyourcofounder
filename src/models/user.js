@@ -11,6 +11,7 @@ function getUser() {
     last_name: { type: String, trim: true },
     email: { type: String, required: true, unique: true, trim: true },
     password: String,
+    
 
     city: { type: String, trim: true },
     skills: { type: [String], default: [] },
