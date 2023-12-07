@@ -1,11 +1,11 @@
 {
-  "name": "your-project-name",
+  "name": "findyourcofounder",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next build && next start -p 8080",
+    "start": "next build && next start -H 0.0.0.0 -p 8080",
     "lint": "next lint"
   },
   "prettier": {
