@@ -47,7 +47,7 @@ export default async function RootLayout({ children }) {
           }}
         />
         <Script
-          id="gtm-script"
+          id="gtm-hotjar"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
