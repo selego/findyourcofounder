@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import accountingApi from "../accounting_api";
+import accountingApi from "../../accounting_api";
 
-export async function GET() {
+export async function POST() {
   const { data, ok } = await accountingApi.post(`/search`)
 
   if (!ok) return NextResponse.json({ messsage: "Error fetching users", users: [] });

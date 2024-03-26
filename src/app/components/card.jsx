@@ -16,7 +16,7 @@ export const Card = ({ user, showModal = true, onClick }) => {
       </h2>
 
       <ul className="flex items-center pb-1 pt-4 gap-x-2 overflow-x-scroll masked-skills">
-        {user.skills.map((skill) => (
+        {user.skills?.map((skill) => (
           <li
             key={skill}
             className={`text-xs py-1 px-4 rounded-full 

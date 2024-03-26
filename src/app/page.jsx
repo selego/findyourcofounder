@@ -28,19 +28,11 @@ export default async function Home({ searchParams }) {
 }
 
 const getUsers = async () => {
-  // return { users: [] }
-
   try {
     const res = await api.get("/api/user");
     return res;
   } catch (e) {
-    console.log(e)
-    return {users: []};
+    console.log(e);
+    return { users: [] };
   }
-
-  // const response = await fetch("http://localhost:3000/api/user", {
-  //   cache: "no-store",
-  // });
-  // const res = await response.json();
-  // return res;
 };
