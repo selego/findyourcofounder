@@ -15,8 +15,8 @@ export const ChomeurForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
-    const {data, ok} = await api.post("/api/user/signup", values);
-    if (!ok) return setErrorGeneral(data.message);
+    const { data, ok, message } = await api.post("/api/user/signup", values);
+    if (!ok) return setErrorGeneral(message);
     signIn("credentials", { email: values.email, password: values.password, redirect: true, callbackUrl: "/" });
   };
 
@@ -245,9 +245,10 @@ export const ChomeurForm = () => {
       <p className="text-xs text-red-500 text-center">{errorGeneral}</p>
       <div className="flex items-center justify-center">
         <button
-        type="submit"
-        onClick={handleSubmit}
-         className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs">
+          type="submit"
+          onClick={handleSubmit}
+          className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
+        >
           Register
         </button>
       </div>

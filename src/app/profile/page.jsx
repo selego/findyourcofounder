@@ -16,7 +16,7 @@ export default function Concept() {
 
   useEffect(() => {
     (async () => {
-      const { user } = await api.get("/api/user/me");
+      const { ok, user } = await api.get("/api/user/me");
       await update({ user });
     })();
   }, []);

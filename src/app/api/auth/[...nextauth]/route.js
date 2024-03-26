@@ -1,8 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-import connectMongoDB from "@/lib/mongodb";
-import User from "@/models/user";
+import accountingApi from "../../accounting_api";
 
 export const authOptions = {
   secret: "SECRET",
@@ -15,18 +13,20 @@ export const authOptions = {
       },
 
       authorize: async (credentials) => {
-        await connectMongoDB();
+        try {
+          let { ok, token, user } = await accountingApi.post(`/signin`, {
+            email: credentials.email,
+            password: credentials.password,
+          })
+          if (!ok) {
+            return null
+          }
 
-        const user = await User.findOne({ email: credentials.email }).lean();
-
-        if (!user) {
-          return null;
+          user = { ...user, token } // add token to user
+          return user
+        } catch (error) {
+          return error
         }
-
-        // const match = await user.comparePassword(password);
-        // if (!match) return NextResponse.json({ message: "Password not match" });
-
-        return user;
       },
     }),
   ],
