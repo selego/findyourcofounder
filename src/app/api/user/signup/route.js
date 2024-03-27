@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import connectMongoDB from "@/lib/mongodb";
-import User from "@/models/user";
+import accountingApi from "../../accounting_api";
 
 export async function POST(req) {
-  await connectMongoDB();
-  const body = await req.json();
-  const email = body.email;
-  const exist = await User.exists({ email });
-  if (exist) return NextResponse.json({ message: "User already exists" });
-  const user = await User.create(body);
-  return NextResponse.json({ message: "User created" });
+  const obj = await req.json();
+
+  const { user, token, ok, code } = await accountingApi.post(`/signup`, obj)
+
+  if (code === "PASSWORD_NOT_VALIDATED") return NextResponse.json({ ok: false, message: "Password not validated" });
+  if (code === "USER_ALREADY_REGISTERED") return NextResponse.json({ ok: false, message: "User already registered" });
+  if (!ok) return NextResponse.json({ ok: false, message: "User not created" });
+  return NextResponse.json({ ok: true, message: "User created" });
 }

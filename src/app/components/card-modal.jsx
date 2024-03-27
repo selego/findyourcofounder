@@ -13,7 +13,7 @@ export const CardModal = ({ user }) => {
   const router = useRouter();
 
   async function handleModalOpen() {
-    await api.post("/api/user/click", { id: user._id });
+    await api.post("/api/user/click", { id: user._id, clicks: user.clicks + 1 });
     router.refresh();
   }
 
