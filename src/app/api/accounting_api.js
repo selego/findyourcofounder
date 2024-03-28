@@ -1,5 +1,5 @@
 const ROOT_URL = process.env.NODE_ENV === "production" ? `https://api-accounting.selego.co/findyourcofounder_user` : "http://localhost:8080/findyourcofounder_user";
-const APP_COUNTRY = process.env.APP_COUNTRY ?? "es"
+const APP_COUNTRY = process.env.APP_COUNTRY || "es"
 
 console.log("APP_COUNTRY", APP_COUNTRY);
 
