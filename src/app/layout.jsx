@@ -1,5 +1,5 @@
 import "./globals.css";
-// import { Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { getServerSession } from "next-auth/next";
 import Script from "next/script"
 import { Toaster } from "react-hot-toast";
@@ -10,10 +10,13 @@ import { Footer } from "./components/footer";
 import Provider from "./auth-provider";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 
-// const poppins = Poppins({
-//   subsets: ["latin"],
-//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-// });
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: '--font-poppins',
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  adjustFontFallback: false,
+  display: "swap",
+});
 
 export const metadata = {
   title: "findyourcofounder",
