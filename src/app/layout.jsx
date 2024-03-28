@@ -1,7 +1,7 @@
 import "./globals.css";
-import { Poppins } from "next/font/google";
+// import { Poppins } from "next/font/google";
 import { getServerSession } from "next-auth/next";
-import Script from "next/script"
+import Script from "next/script";
 import { Toaster } from "react-hot-toast";
 
 import { TopBar } from "./components/top-bar";
@@ -10,12 +10,11 @@ import { Footer } from "./components/footer";
 import Provider from "./auth-provider";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: '--font-poppins',
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  preload: false,
-});
+// const poppins = Poppins({
+//   subsets: ["latin"],
+//   variable: '--font-poppins',
+//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+// });
 
 export const metadata = {
   title: "findyourcofounder",
@@ -27,7 +26,8 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body>
+        {/* <body className={poppins.className}> */}
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-KR6T4LVH"
@@ -62,6 +62,12 @@ export default async function RootLayout({ children }) {
               a.appendChild(r);
           })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`,
           }}
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet"
         />
         <Provider session={session}>
           <TopBar />

@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply bg-black text-white;
+    font-family: "Poppins", sans-serif;
   }
 
   input[type="search"] {
