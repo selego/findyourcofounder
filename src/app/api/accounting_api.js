@@ -1,14 +1,13 @@
 const ROOT_URL = process.env.NODE_ENV === "production" ? `https://api-accounting.selego.co/findyourcofounder_user` : "http://localhost:8080/findyourcofounder_user";
 const APP_COUNTRY = process.env.APP_COUNTRY || "es"
 
-console.log("APP_COUNTRY", APP_COUNTRY);
-
 class accountingApi {
   async get(url) {
     return fetch(`${ROOT_URL}${url}`, { next: { revalidate: 0 } }).then((response) => response.json());
   }
-
+  
   async post(url, data) {
+    console.log({"App-Country": APP_COUNTRY});
     return fetch(`${ROOT_URL}${url}`, {
       method: "POST",
       body: JSON.stringify(data),
@@ -18,8 +17,8 @@ class accountingApi {
       },
     }).then((response) => response.json());
   }
-
-
+  
+  
   async put(url, data) {
     return fetch(`${ROOT_URL}${url}`, {
       method: "PUT",
