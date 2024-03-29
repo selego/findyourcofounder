@@ -5,6 +5,11 @@ console.log({"Env URL": ROOT_URL});
 console.log({"App-Country": APP_COUNTRY});
 
 class accountingApi {
+
+  constructor(app_conntry) {
+    this.app_conntry = app_conntry;
+  }
+
   async get(url) {
     return fetch(`${ROOT_URL}${url}`, { next: { revalidate: 0 } }).then((response) => response.json());
   }
@@ -15,7 +20,7 @@ class accountingApi {
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
-        "App-Country": APP_COUNTRY
+        "App-Country": this.app_conntry
       },
     }).then((response) => response.json());
   }
@@ -27,10 +32,10 @@ class accountingApi {
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
-        "App-Country": APP_COUNTRY
+        "App-Country": this.app_conntry
       },
     }).then((response) => response.json());
   }
 }
 
-export default new accountingApi();
+export default new accountingApi(APP_COUNTRY);
