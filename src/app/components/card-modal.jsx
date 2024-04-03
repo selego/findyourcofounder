@@ -62,15 +62,15 @@ export const CardModal = ({ user }) => {
           <div className="flex flex-col gap-y-12 flex-1 overflow-hidden py-4">
             <div>
               <h3 className="opacity-50">What motivates you</h3>
-              <p className="break-all">&quot;{user.motivations}&quot;</p>
+              <p>&quot;{user.motivations}&quot;</p>
             </div>
             <div>
               <h3 className="opacity-50">The ideal business partner</h3>
-              <p className="break-all">&quot;{user.partner}&quot;</p>
+              <p>&quot;{user.partner}&quot;</p>
             </div>
             <div>
               <h3 className="opacity-50">The dream business</h3>
-              <p className="break-all">&quot;{user.business}&quot;</p>
+              <p>&quot;{user.business}&quot;</p>
             </div>
           </div>
 
