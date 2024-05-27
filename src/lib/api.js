@@ -1,17 +1,17 @@
 let ROOT_URL = ''
 
-if (typeof window !== 'undefined') {
-  if (window.location.href.includes('findyourcofounder.es')) {
-    ROOT_URL = "https://findyourcofounder.es";
-  } else if (window.location.href.includes('findyourcofounder.nl')) {
-    ROOT_URL = "https://findyourcofounder.nl";
-  } else {
-    ROOT_URL = "http://localhost:3000";
-  }
-}
-console.log('ROOT_URL2', ROOT_URL)
+// if(window){
+// if (window.location.href.includes('findyourcofounder.es')) {
+//   ROOT_URL = "https://findyourcofounder.es";
+// } else if (window.location.href.includes('findyourcofounder.nl')) {
+//   ROOT_URL = "https://findyourcofounder.nl";
+// } else {
+//   ROOT_URL = "http://localhost:3000";
+// }
+// }
+// console.log('ROOT_URL2', ROOT_URL)
 
-console.log("process.env.NEXTAUTH_URL", process.env.NEXTAUTH_URL)
+console.log("process.env.NEXTAUTH_URL", process.env)
 
 class api {
   async get(url) {
