@@ -11,7 +11,7 @@ let ROOT_URL = 'https://findyourcofounder.es'
 // }
 // console.log('ROOT_URL2', ROOT_URL)
 
-console.log("process.env.NEXTAUTH_URL", process.env)
+console.log("process.env.APP_COUNTRY", process.env.APP_COUNTRY)
 
 class api {
   async get(url) {
