@@ -1,4 +1,4 @@
-let ROOT_URL = ''
+let ROOT_URL = 'https://findyourcofounder.es'
 
 // if(window){
 // if (window.location.href.includes('findyourcofounder.es')) {
