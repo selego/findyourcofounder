@@ -1,10 +1,13 @@
-const ROOT_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXTAUTH_URL || `https://findyourcofounder.nl`
-    : "http://localhost:3000";
+let ROOT_URL = ''
 
+if (window.location.href.includes('findyourcofounder.es')) {
+  ROOT_URL = "https://findyourcofounder.es";
+} else if (window.location.href.includes('findyourcofounder.nl')) {
+  ROOT_URL = "https://findyourcofounder.nl";
+} else {
+  ROOT_URL = "http://localhost:3000";
+}
 
-console.log("ROOT_URL", ROOT_URL);
 
 class api {
   async get(url) {
