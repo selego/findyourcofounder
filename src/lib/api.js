@@ -3,6 +3,9 @@ const ROOT_URL =
     ? process.env.NEXTAUTH_URL || `https://findyourcofounder.nl`
     : "http://localhost:3000";
 
+
+console.log("ROOT_URL", ROOT_URL);
+
 class api {
   async get(url) {
     return fetch(`${ROOT_URL}${url}`, { next: { revalidate: 0 } }).then((response) => response.json());
