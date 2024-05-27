@@ -1,6 +1,6 @@
 let ROOT_URL = ''
 
-if (window) {
+if (typeof window !== 'undefined') {
   if (window.location.href.includes('findyourcofounder.es')) {
     ROOT_URL = "https://findyourcofounder.es";
   } else if (window.location.href.includes('findyourcofounder.nl')) {
