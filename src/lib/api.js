@@ -10,7 +10,7 @@ if (window.location.href.includes('findyourcofounder.es')) {
 
 console.log('ROOT_URL2', ROOT_URL)
 
-console.log(process.env.NEXTAUTH_URL)
+console.log("process.env.NEXTAUTH_URL", process.env.NEXTAUTH_URL)
 
 class api {
   async get(url) {
