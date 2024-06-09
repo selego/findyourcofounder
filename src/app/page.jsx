@@ -6,12 +6,6 @@ import api from "@/lib/api";
 export default async function Home({ searchParams }) {
   const { users } = await getUsers();
 
-  // const filteredUsers = users.filter((user) => {
-  //   const searchQuery = searchParams.search;
-  //   const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-  //   return searchQuery ? fullName.includes(searchQuery.toLowerCase()) : user;
-  // });
-
   return (
     <>
       <header>
