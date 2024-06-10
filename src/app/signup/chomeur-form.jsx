@@ -4,8 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { skillsColors } from "@/app/utils/constants";
 import { signIn } from "next-auth/react";
-
-import api from "@/lib/api";
+import { accountingApi } from "../api/accounting.api";
 
 export const ChomeurForm = () => {
   const [values, setValues] = useState({ skills: [] });
@@ -15,7 +14,7 @@ export const ChomeurForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
-    const { data, ok, message } = await api.post("/api/user/signup", values);
+    const { data, ok, message } = await accountingApi.signUp(values);
     if (!ok) return setErrorGeneral(message);
     signIn("credentials", { email: values.email, password: values.password, redirect: true, callbackUrl: "/" });
   };

@@ -8,15 +8,15 @@ import { toast } from "react-hot-toast";
 
 import { Card } from "@/app/components/card";
 import { skillsColors } from "@/app/utils/constants";
-
-import api from "@/lib/api";
+import {accountingApi} from '@/app/api/accounting.api';
 
 export default function Concept() {
   const { data: session, status, update } = useSession();
 
   useEffect(() => {
     (async () => {
-      const { ok, user } = await api.get("/api/user/me");
+      const { ok, user } = await accountingApi.getProfile();
+      console.log(user)
       await update({ user });
     })();
   }, []);
@@ -103,7 +103,7 @@ const UserForm = () => {
 
     if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
     values._id = user._id;
-    await api.post("/api/user/update", values);
+    await accountingApi.updateUserProfile(values);
     await update({ user: values });
     toast.success("Your profile has been updated !");
   };

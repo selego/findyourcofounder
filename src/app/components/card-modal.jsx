@@ -6,14 +6,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 
 const { skillsColors } = require("@/app/utils/constants");
 
-import api from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { accountingApi } from "../api/accounting.api";
 
 export const CardModal = ({ user }) => {
   const router = useRouter();
 
   async function handleModalOpen() {
-    await api.post("/api/user/click", { id: user._id, clicks: user.clicks + 1 });
+    accountingApi.showCofounderDetails(user);
     router.refresh();
   }
 

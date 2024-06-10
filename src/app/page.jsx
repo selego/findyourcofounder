@@ -1,10 +1,9 @@
 import { SearchBar } from "@/app/components/search-bar";
 import { Card } from "@/app/components/card";
-
-import api from "@/lib/api";
+import {accountingApi} from '@/app/api/accounting.api';
 
 export default async function Home({ searchParams }) {
-  const { users } = await getUsers();
+  const {users} = await accountingApi.getUsers();
 
   return (
     <>
@@ -20,13 +19,3 @@ export default async function Home({ searchParams }) {
     </>
   );
 }
-
-const getUsers = async () => {
-  try {
-    const res = await api.get("/api/user");
-    return res;
-  } catch (e) {
-    console.log(e);
-    return { users: [] };
-  }
-};

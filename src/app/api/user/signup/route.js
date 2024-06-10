@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import accountingApi from "../../accounting_api";
+import { httpService } from "@/services/httpService";
 
 export async function POST(req) {
   const obj = await req.json();
 
-  const { user, token, ok, code } = await accountingApi.post(`/signup`, obj)
+  const { user, token, ok, code } = await httpService.serverService.post(`/signup`, obj);
 
   if (code === "PASSWORD_NOT_VALIDATED") return NextResponse.json({ ok: false, message: "Password not validated" });
   if (code === "USER_ALREADY_REGISTERED") return NextResponse.json({ ok: false, message: "User already registered" });

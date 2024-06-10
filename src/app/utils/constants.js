@@ -5,3 +5,6 @@ export const skillsColors = {
   Product: "bg-product",
   Tech: "bg-tech",
 };
+
+export const BASE_URL = "http://localhost:3000";
+export const SERVER_BASE_URL = "http://localhost:8080/findyourcofounder_user";
