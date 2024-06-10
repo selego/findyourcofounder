@@ -1,11 +1,11 @@
 import { httpService } from "@/services/httpService";
 
 class AccountingAPI {
-  setURL = (url) => `${ACCOUNTING_BASE_URL}/${url}`;
+  getUserUrl = (name) => `/api/user/${name}`;
 
   getUsers = async () => {
     try {
-      const res = await httpService.nextService.get("/api/user/search");
+      const res = await httpService.nextService.get(this.getUserUrl("search"));
       return res;
     } catch (e) {
       console.log(e);
@@ -15,7 +15,7 @@ class AccountingAPI {
 
   getProfile = async () => {
     try {
-      const { ok, user } = await httpService.nextService.get("/api/user/profile");
+      const { ok, user } = await httpService.nextService.get(this.getUserUrl("profile"));
       return user;
     } catch {
       return { user: null };
@@ -23,15 +23,15 @@ class AccountingAPI {
   };
 
   showCofounderDetails = async (user) => {
-    return await httpService.nextService.post("/api/user/showCoFounder", { id: user._id, clicks: user.clicks + 1 });
+    return await httpService.nextService.post(this.getUserUrl("showCoFounder"), { id: user._id, clicks: user.clicks + 1 });
   };
 
   updateUserProfile = async (user) => {
-    return await httpService.nextService.post("/api/user/update", user);
+    return await httpService.nextService.post(this.getUserUrl("update"), user);
   };
 
   signUp = async (user) => {
-    return await httpService.nextService.post("/api/user/signup", user);
+    return await httpService.nextService.post(this.getUserUrl("signup"), user);
   };
 }
 
