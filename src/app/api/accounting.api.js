@@ -1,37 +1,54 @@
 import { httpService } from "@/services/httpService";
+import { configuredUrlForNoCashing } from "../utils/constants";
 
 class AccountingAPI {
-  getUserUrl = (name) => `/api/user/${name}`;
 
   getUsers = async () => {
     try {
-      const res = await httpService.nextService.get(this.getUserUrl("search"));
-      return res;
+      const { ok, data } = await httpService.post(configuredUrlForNoCashing(`search`));
+      if (!ok) return { messsage: "Error fetching users", users: [] };
+      return { users: data.users };
+      return data;
     } catch (e) {
-      console.log(e);
       return { users: [] };
     }
   };
 
-  getProfile = async () => {
+  getProfile = async (userId) => {
     try {
-      const { ok, user } = await httpService.nextService.get(this.getUserUrl("profile"));
-      return user;
-    } catch {
-      return { user: null };
+      const { ok, user } = await httpService.get(configuredUrlForNoCashing(`${userId}`));
+      if (!session || !session.user) {
+        return { ok, message: "User not authenticated" };
+      }
+      if (!ok) return { ok, message: "User not found" };
+      return { ok, user: data };
+    } catch (error) {
+      console.log("error profile", error);
+      return { user: null, ok: false };
     }
   };
 
   showCofounderDetails = async (user) => {
-    return await httpService.nextService.post(this.getUserUrl("showCoFounder"), { id: user._id, clicks: user.clicks + 1 });
+    const { data, ok } = await httpService.put(configuredUrlForNoCashing(`${user._id}`), {
+      clicks: user.clicks + 1,
+    });
+    if (!ok) return { ok, message: "Error updating user" };
+    console.log(data);
+    return { ok, data, message: "clicked" };
   };
 
   updateUserProfile = async (user) => {
-    return await httpService.nextService.post(this.getUserUrl("update"), user);
+    const { data, ok } = await httpService.put(configuredUrlForNoCashing(`${user._id}`), user);
+    if (!ok) return { ok, message: "Error updating user" };
+    return { ok, message: "User updated" };
   };
 
-  signUp = async (user) => {
-    return await httpService.nextService.post(this.getUserUrl("signup"), user);
+  signUp = async (userBody) => {
+    const { user, token, ok, code } = await httpService.post(configuredUrlForNoCashing(`signup`), userBody);
+    if (code === "PASSWORD_NOT_VALIDATED") return { ok, message: "Password not validated" };
+    if (code === "USER_ALREADY_REGISTERED") return { ok, message: "User already registered" };
+    if (!ok) return { ok: false, message: "User not created" };
+    return { ok: true, message: "User created" };
   };
 }
 

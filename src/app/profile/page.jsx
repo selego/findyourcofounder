@@ -9,17 +9,27 @@ import { toast } from "react-hot-toast";
 import { Card } from "@/app/components/card";
 import { skillsColors } from "@/app/utils/constants";
 import {accountingApi} from '@/app/api/accounting.api';
+import { httpService } from "@/services/httpService";
 
 export default function Concept() {
   const { data: session, status, update } = useSession();
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    (async () => {
-      const { ok, user } = await accountingApi.getProfile();
-      console.log(user)
-      await update({ user });
-    })();
-  }, []);
+   const fetchProfile = async () => {
+      if (session && session.user) {
+        const userId = session.user._id;
+        const { ok, user } = await accountingApi.getProfile(userId);
+        if (ok) {
+          setProfile(user);
+        } else {
+          console.error("Failed to fetch profile");
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [session]);
 
   if (status && !["authenticated", "loading"].includes(status)) return redirect("/");
 

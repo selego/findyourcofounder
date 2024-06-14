@@ -15,7 +15,7 @@ import { SERVER_BASE_URL, BASE_URL } from "@/app/utils/constants";
 
 console.log("process.env.APP_COUNTRY in httpService", process.env.APP_COUNTRY)
 
-class api {
+class Api {
   ROOT_URL = "";
   headers = {
     "Content-Type": "application/json",
@@ -47,10 +47,4 @@ class api {
   }
 }
 
-const nextService = new api(BASE_URL);
-const serverService = new api(SERVER_BASE_URL);
-
-export const httpService = {
-  nextService,
-  serverService,
-};
+export const httpService = new Api(SERVER_BASE_URL);
