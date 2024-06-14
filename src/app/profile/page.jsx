@@ -13,7 +13,6 @@ import { httpService } from "@/services/httpService";
 
 export default function Concept() {
   const { data: session, status, update } = useSession();
-  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
    const fetchProfile = async () => {
@@ -21,7 +20,7 @@ export default function Concept() {
         const userId = session.user._id;
         const { ok, user } = await accountingApi.getProfile(userId);
         if (ok) {
-          setProfile(user);
+          await update({ user });
         } else {
           console.error("Failed to fetch profile");
         }
