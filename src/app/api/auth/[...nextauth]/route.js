@@ -15,11 +15,12 @@ export const authOptions = {
 
       authorize: async (credentials) => {
         try {
-          const body = JSON.stringify({
-            email: credentials.email,
-            password: credentials.password,
-          });
-          let { ok, token, user } = await httpService.serverService.post("/signin", body).then((response) => response.json());
+          let { ok, token, user } = await httpService
+            .post("/signin", {
+              email: credentials.email,
+              password: credentials.password,
+            })
+            .then((response) => response.json());
           if (!ok) {
             return null
           }
