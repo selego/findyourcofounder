@@ -12,9 +12,9 @@ import { httpService } from "@/services/httpService";
 export const CardModal = ({ user }) => {
   const router = useRouter();
 
- const showCofounderDetails = async (user) => {
-    const { data, ok } = await httpService.put(`/${user._id}`, {
-      clicks: user.clicks + 1,
+ const showCofounderDetails = async (userDetails) => {
+    const { data, ok } = await httpService.put(`/${userDetails._id}}`, {
+      clicks: userDetails.clicks + 1,
     });
     if (!ok) return { ok, message: "Error updating user" };
     console.log(data);
