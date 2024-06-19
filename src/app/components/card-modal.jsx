@@ -13,11 +13,10 @@ export const CardModal = ({ user }) => {
   const router = useRouter();
 
  const showCofounderDetails = async (userDetails) => {
-    const { data, ok } = await httpService.put(`/${userDetails._id}}`, {
+    const { data, ok } = await httpService.put(`/${userDetails._id}`, {
       clicks: userDetails.clicks + 1,
     });
     if (!ok) return { ok, message: "Error updating user" };
-    console.log(data);
     return { ok, data, message: "clicked" };
   };
 

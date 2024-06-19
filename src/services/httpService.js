@@ -24,7 +24,6 @@ class Api {
     "Pragma": "no-cache",
     "Expires": "0",
   };
-  noCash = process.env.NODE_ENV !== "development" ? `` : `?timestamp=${new Date().getTime()}`;
 
   constructor(rootUrl) {
     this.ROOT_URL = rootUrl;

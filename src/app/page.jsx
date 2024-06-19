@@ -6,7 +6,7 @@ import { configuredUrlForNoCashing } from "./utils/constants";
 export default async function Home({ searchParams }) {
  const getUsers = async () => {
     try {
-      const { ok, data } = await httpService.post('/search');
+      const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`);
       if (!ok) return { messsage: "Error fetching users", users: [] };
       return { users: data.users };
       return data;
