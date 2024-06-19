@@ -21,17 +21,18 @@ class Api {
     "Content-Type": "application/json",
     "App-Country": process.env.APP_COUNTRY ?? "es",
   };
+  noCash = process.env.NODE_ENV !== "development" ? `` : `?timestamp=${new Date().getTime()}`
 
   constructor(rootUrl) {
     this.ROOT_URL = rootUrl;
   }
 
   async get(url) {
-    return fetch(`${this.ROOT_URL}${url}`, { next: { revalidate: 0 } }).then((response) => response.json());
+    return fetch(`${this.ROOT_URL}${url}${this.noCash}`, { next: { revalidate: 0 } }).then((response) => response.json());
   }
 
   async post(url, data, headers) {
-    return fetch(`${this.ROOT_URL}${url}`, {
+    return fetch(`${this.ROOT_URL}${url}${this.noCash}`, {
       method: "POST",
       body: JSON.stringify(data),
       headers: headers ?? this.headers,
@@ -39,7 +40,7 @@ class Api {
   }
 
   async put(url, data, headers) {
-    return fetch(`${this.ROOT_URL}${url}`, {
+    return fetch(`${this.ROOT_URL}${url}${this.noCash}`, {
       method: "PUT",
       body: JSON.stringify(data),
       headers: headers ?? this.headers,

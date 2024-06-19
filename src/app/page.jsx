@@ -1,9 +1,20 @@
 import { SearchBar } from "@/app/components/search-bar";
 import { Card } from "@/app/components/card";
-import {accountingApi} from '@/app/api/accounting.api';
+import { httpService } from "@/services/httpService";
+import { configuredUrlForNoCashing } from "./utils/constants";
 
 export default async function Home({ searchParams }) {
-  const {users} = await accountingApi.getUsers();
+ const getUsers = async () => {
+    try {
+      const { ok, data } = await httpService.post('/search');
+      if (!ok) return { messsage: "Error fetching users", users: [] };
+      return { users: data.users };
+      return data;
+    } catch (e) {
+      return { users: [] };
+    }
+  };
+  const {users} = await getUsers();
 
   return (
     <>
