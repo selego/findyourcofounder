@@ -4,16 +4,24 @@ import { FaLinkedin } from "react-icons/fa6";
 import { FaXmark } from "react-icons/fa6";
 import * as Dialog from "@radix-ui/react-dialog";
 
-const { skillsColors } = require("@/app/utils/constants");
+const { skillsColors, configuredUrlForNoCashing } = require("@/app/utils/constants");
 
-import api from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { httpService } from "@/services/httpService";
 
 export const CardModal = ({ user }) => {
   const router = useRouter();
 
+ const showCofounderDetails = async (userDetails) => {
+    const { data, ok } = await httpService.put(`/${userDetails._id}`, {
+      clicks: userDetails.clicks + 1,
+    });
+    if (!ok) return { ok, message: "Error updating user" };
+    return { ok, data, message: "clicked" };
+  };
+
   async function handleModalOpen() {
-    await api.post("/api/user/click", { id: user._id, clicks: user.clicks + 1 });
+    await showCofounderDetails(user);
     router.refresh();
   }
 

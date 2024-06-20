@@ -2,20 +2,27 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { skillsColors } from "@/app/utils/constants";
+import { configuredUrlForNoCashing, skillsColors } from "@/app/utils/constants";
 import { signIn } from "next-auth/react";
-
-import api from "@/lib/api";
+import { httpService } from "@/services/httpService";
 
 export const ChomeurForm = () => {
   const [values, setValues] = useState({ skills: [] });
   const [errorSkills, setErrorSkills] = useState(``);
   const [errorGeneral, setErrorGeneral] = useState(``);
 
+  const signUp = async (userBody) => {
+    const { user, token, ok, code } = await httpService.post('/signup', userBody);
+    if (code === "PASSWORD_NOT_VALIDATED") return { ok, message: "Password not validated" };
+    if (code === "USER_ALREADY_REGISTERED") return { ok, message: "User already registered" };
+    if (!ok) return { ok: false, message: "User not created" };
+    return { ok: true, message: "User created" };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
-    const { data, ok, message } = await api.post("/api/user/signup", values);
+    const { data, ok, message } = await signUp(values);
     if (!ok) return setErrorGeneral(message);
     signIn("credentials", { email: values.email, password: values.password, redirect: true, callbackUrl: "/" });
   };

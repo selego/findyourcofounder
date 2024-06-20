@@ -1,10 +1,20 @@
 import { SearchBar } from "@/app/components/search-bar";
 import { Card } from "@/app/components/card";
-
-import api from "@/lib/api";
+import { httpService } from "@/services/httpService";
+import { configuredUrlForNoCashing } from "./utils/constants";
 
 export default async function Home({ searchParams }) {
-  const { users } = await getUsers();
+ const getUsers = async () => {
+    try {
+      const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`);
+      if (!ok) return { messsage: "Error fetching users", users: [] };
+      return { users: data.users };
+      return data;
+    } catch (e) {
+      return { users: [] };
+    }
+  };
+  const {users} = await getUsers();
 
   return (
     <>
@@ -20,13 +30,3 @@ export default async function Home({ searchParams }) {
     </>
   );
 }
-
-const getUsers = async () => {
-  try {
-    const res = await api.get("/api/user");
-    return res;
-  } catch (e) {
-    console.log(e);
-    return { users: [] };
-  }
-};

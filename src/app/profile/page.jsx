@@ -7,19 +7,41 @@ import { signOut, useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 
 import { Card } from "@/app/components/card";
-import { skillsColors } from "@/app/utils/constants";
-
-import api from "@/lib/api";
+import { configuredUrlForNoCashing, skillsColors } from "@/app/utils/constants";
+import { httpService } from "@/services/httpService";
 
 export default function Concept() {
   const { data: session, status, update } = useSession();
 
+  const getProfile = async (userId) => {
+    try {
+      const { ok, user } = await httpService.get(`/${userId}`);
+      if (!session || !session.user) {
+        return { ok, message: "User not authenticated" };
+      }
+      if (!ok) return { ok, message: "User not found" };
+      return { ok, user: data };
+    } catch (error) {
+      console.log("error profile", error);
+      return { user: null, ok: false };
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      const { ok, user } = await api.get("/api/user/me");
-      await update({ user });
-    })();
-  }, []);
+   const fetchProfile = async () => {
+      if (session && session.user) {
+        const userId = session.user._id;
+        const { ok, user } = await getProfile(userId);
+        if (ok) {
+          await update({ user });
+        } else {
+          console.error("Failed to fetch profile");
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [session]);
 
   if (status && !["authenticated", "loading"].includes(status)) return redirect("/");
 
@@ -98,12 +120,19 @@ const UserForm = () => {
     setValues(user);
   }, [user]);
 
+  const updateUserProfile = async (user) => {
+    console.log(user);
+    const { data, ok } = await httpService.put(`/${user._id}`, user);
+    if (!ok) return { ok, message: "Error updating user" };
+    return { ok, message: "User updated" };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
     values._id = user._id;
-    await api.post("/api/user/update", values);
+    await updateUserProfile(values);
     await update({ user: values });
     toast.success("Your profile has been updated !");
   };
