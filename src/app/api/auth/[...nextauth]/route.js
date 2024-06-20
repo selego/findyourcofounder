@@ -15,12 +15,12 @@ export const authOptions = {
 
       authorize: async (credentials) => {
         try {
-          let { ok, token, user } = await httpService
+          const response = await httpService
             .post("/signin", {
               email: credentials.email,
               password: credentials.password,
             })
-            .then((response) => response.json());
+          let { ok, token, user } = response;
           if (!ok) {
             return null
           }
@@ -41,7 +41,6 @@ export const authOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, trigger, session }) => {
-      console.log('jwt',{ token, user, trigger, session });
       if (user) token.user = user;
       if (trigger === "update" && session.user) token.user = session.user;
 
