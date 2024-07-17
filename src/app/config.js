@@ -1,4 +1,4 @@
-export const APP_COUNTRY = getCountryCodeFromCurrentUrl();
+export const APP_COUNTRY = process.env.APP_COUNTRY ?? getCountryCodeFromCurrentUrl();
 
 
 function getCountryCodeFromCurrentUrl() {
