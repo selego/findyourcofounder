@@ -9,7 +9,7 @@ function getCountryCodeFromUrl(url) {
     const tld = parts[parts.length - 1];
 
     return tld;
-  } catch () {
+  } catch {
     return 'es';
   }
 }
