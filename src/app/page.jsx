@@ -9,7 +9,6 @@ export default async function Home({ searchParams }) {
       const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`);
       if (!ok) return { messsage: "Error fetching users", users: [] };
       return { users: data.users };
-      return data;
     } catch (e) {
       return { users: [] };
     }
