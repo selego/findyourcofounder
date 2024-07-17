@@ -1,15 +1,13 @@
-export const APP_COUNTRY = getCountryCodeFromUrl();
+export const APP_COUNTRY = getCountryCodeFromCurrentUrl();
 
 
-function getCountryCodeFromUrl(url) {
-  try {
-    const urlObj = new URL(url);
-    const hostname = urlObj.hostname;
+function getCountryCodeFromCurrentUrl() {
+  try{
+    const hostname = window.location.hostname;
     const parts = hostname.split(".");
     const tld = parts[parts.length - 1];
-
     return tld;
-  } catch {
-    return 'es';
+  }catch{
+     return 'es'
   }
 }
