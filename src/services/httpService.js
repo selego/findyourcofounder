@@ -1,4 +1,4 @@
-import { APP_COUNTRY } from "@/app/config";
+// let ROOT_URL = "http://localhost:3000";
 
 import { SERVER_BASE_URL, BASE_URL } from "@/app/utils/constants";
 
@@ -13,12 +13,11 @@ import { SERVER_BASE_URL, BASE_URL } from "@/app/utils/constants";
 // }
 // console.log('ROOT_URL2', ROOT_URL)
 
-
-
 class Api {
   ROOT_URL = "";
   headers = {
     "Content-Type": "application/json",
+    "App-Country": process.env.APP_COUNTRY ?? "es",
     "Cache-Control": "no-cache, no-store, must-revalidate",
     "Pragma": "no-cache",
     "Expires": "0",
@@ -28,35 +27,25 @@ class Api {
     this.ROOT_URL = rootUrl;
   }
 
-  getHeaders() {
-    return {
-      ...this.headers,
-      "App-Country": APP_COUNTRY ?? "es",
-    };
-  }
-
   async get(url) {
-    const headers = this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, { headers }).then((response) =>
-      response.json()
+    return fetch(`${this.ROOT_URL}${url}`, { headers: this.headers }).then(
+      (response) => response.json()
     );
   }
 
   async post(url, data, headers) {
-    const finalHeaders = headers ?? this.getHeaders();
     return fetch(`${this.ROOT_URL}${url}`, {
       method: "POST",
       body: JSON.stringify(data),
-      headers: finalHeaders,
+      headers: headers ?? this.headers,
     }).then((response) => response.json());
   }
 
   async put(url, data, headers) {
-    const finalHeaders = headers ?? this.getHeaders();
     return fetch(`${this.ROOT_URL}${url}`, {
       method: "PUT",
       body: JSON.stringify(data),
-      headers: finalHeaders,
+      headers: headers ?? this.headers,
     }).then((response) => response.json());
   }
 }
