@@ -1,14 +1,28 @@
 import Link from "next/link";
+import Script from "next/script";
 import { FaLinkedin } from "react-icons/fa6";
 import { skillsColors } from "@/app/utils/constants";
 import { httpService } from "@/services/httpService";
 
 export default async function Contact({ params }) {
-  const { ok, data } = await httpService.get(`/${params.id}`);
-  if(!data) return <></>
+  const { ok, data } = await httpService.get(`/slug/${params.slug}`);
+  if (!data) return <></>;
 
   return (
     <>
+      <Script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: `${{
+            "@context": "https://schema.org/",
+            "@type": "Person",
+            name: `${data.first_name} ${data.last_name}`,
+            url: `${data.linkedin}`,
+            jobTitle: `${data.skills}`,
+            address: `${data.city}`,
+          }}`,
+        }}
+      />
       <main className="max-w-[750px] w-full mx-auto flex flex-col gap-y-12">
         <article className="flex flex-col gap-y-12">
           <h1 className="text-center text-shadow lg:text-2xl text-xl">
@@ -32,7 +46,7 @@ export default async function Contact({ params }) {
             ))}
           </ul>
 
-          <div className="flex flex-col lg:gap-y-12 gap-y-6 flex-1 overflow-hidden mask-desc">
+          <div className="flex flex-col lg:gap-y-12 gap-y-6 flex-1 overflow-hidden">
             <div>
               <h3 className="opacity-50 lg:text-xs text-xxs">What motivates you</h3>
               <p className="text-xs lg:text-sm">&quot;{data.motivations}&quot;</p>
