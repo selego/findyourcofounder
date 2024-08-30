@@ -12,7 +12,7 @@ import { httpService } from "@/services/httpService";
 export const CardModal = ({ user }) => {
   const router = useRouter();
 
- const showCofounderDetails = async (userDetails) => {
+  const showCofounderDetails = async (userDetails) => {
     const { data, ok } = await httpService.put(`/${userDetails._id}`, {
       clicks: userDetails.clicks + 1,
     });
@@ -47,7 +47,10 @@ export const CardModal = ({ user }) => {
             </div>
           </Dialog.Close>
           <h2 className="text-center text-shadow text-3xl">
-            {user.first_name} {user.last_name}
+            <Link href={`/contact/${user.slug}`} target="_blank" className="no-underline text-white hover:underline">
+              {user.first_name} {user.last_name}
+            </Link>
+
             {user.linkedin && (
               <Link href={user.linkedin} target="_blank" className="ml-4">
                 <FaLinkedin className="inline-block text-linkedIn" size={24} />
