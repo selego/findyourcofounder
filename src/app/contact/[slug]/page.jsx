@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Script from "next/script";
 import { FaLinkedin } from "react-icons/fa6";
 import { skillsColors } from "@/app/utils/constants";
 import { httpService } from "@/services/httpService";
@@ -10,19 +9,6 @@ export default async function Contact({ params }) {
 
   return (
     <>
-      <Script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: `${{
-            "@context": "https://schema.org/",
-            "@type": "Person",
-            name: `${data.first_name} ${data.last_name}`,
-            url: `${data.linkedin}`,
-            jobTitle: `${data.skills}`,
-            address: `${data.city}`,
-          }}`,
-        }}
-      />
       <main className="max-w-[750px] w-full mx-auto flex flex-col gap-y-12">
         <article className="flex flex-col gap-y-12">
           <h1 className="text-center text-shadow lg:text-2xl text-xl">
