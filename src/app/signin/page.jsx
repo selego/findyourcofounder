@@ -65,7 +65,7 @@ export default function signInPage() {
 
           <div className="flex items-center gap-x-6 justify-center lg:text-base text-sm">
             <Link href="/signup">Register</Link>
-            <Link href="/forget">Forget password ?</Link>
+            <Link href="/forgot-password">Forget password ?</Link>
           </div>
         </div>
       </main>
