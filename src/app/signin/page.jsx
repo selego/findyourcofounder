@@ -10,7 +10,6 @@ export default function signInPage() {
   const [password, setPassword] = useState("");
 
   const register = async (e) => {
-    e.preventDefault();
     await signIn("credentials", { email, password, redirect: true, callbackUrl: "/profile" });
   };
 

@@ -21,7 +21,6 @@ export const ChomeurForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("haha");
     if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
     const { data, ok, message } = await signUp(values);
     if (!ok) return setErrorGeneral(message);
