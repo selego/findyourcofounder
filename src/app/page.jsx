@@ -4,16 +4,18 @@ import { httpService } from "@/services/httpService";
 import { configuredUrlForNoCashing } from "./utils/constants";
 
 export default async function Home({ searchParams }) {
- const getUsers = async () => {
+  const getUsers = async () => {
     try {
-      const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`);
+      const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`, {
+        search: searchParams.search,
+      });
       if (!ok) return { messsage: "Error fetching users", users: [] };
       return { users: data.users };
     } catch (e) {
       return { users: [] };
     }
   };
-  const {users} = await getUsers();
+  const { users } = await getUsers();
 
   return (
     <>
