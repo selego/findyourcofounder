@@ -2,19 +2,41 @@
 
 import { httpService } from "@/services/httpService";
 import { useState } from "react";
-
-export default function ResetPassword() {
+import { useRouter } from "next/navigation";
+export default function ResetPassword({ searchParams }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [hasReset, setHasReset] = useState(false);
 
-  const resetPassword = async () => {
+  const { token } = searchParams;
+  const router = useRouter();
+
+  const resetPassword = async (e) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
       return;
     }
-    await httpService.post("/reset_password", { password });
+    try {
+      await httpService.post("/forgot_password_reset", { password, token });
+      setHasReset(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  if (hasReset) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-center text-2xl font-bold mb-12">Password reset successfully</h1>
+        <button
+          className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
+          onClick={() => router.push("/signin")}
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -53,7 +75,7 @@ export default function ResetPassword() {
         <button
           disabled={!password || !confirmPassword || password !== confirmPassword}
           onClick={resetPassword}
-          className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
+          className="disabled:opacity-50 bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
         >
           Reset password
         </button>
