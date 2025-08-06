@@ -12,7 +12,7 @@ export const ChomeurForm = () => {
   const [errorGeneral, setErrorGeneral] = useState(``);
 
   const signUp = async (userBody) => {
-    const { user, token, ok, code } = await httpService.post('/signup', userBody);
+    const { user, token, ok, code } = await httpService.post("/signup", userBody);
     if (code === "PASSWORD_NOT_VALIDATED") return { ok, message: "Password not validated" };
     if (code === "USER_ALREADY_REGISTERED") return { ok, message: "User already registered" };
     if (!ok) return { ok: false, message: "User not created" };

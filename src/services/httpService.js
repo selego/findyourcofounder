@@ -18,8 +18,8 @@ class Api {
   headers = {
     "Content-Type": "application/json",
     "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache",
-    "Expires": "0",
+    Pragma: "no-cache",
+    Expires: "0",
   };
 
   constructor(rootUrl) {
@@ -35,9 +35,7 @@ class Api {
 
   async get(url) {
     const headers = this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, { headers }).then((response) =>
-      response.json()
-    );
+    return fetch(`${this.ROOT_URL}${url}`, { headers }).then((response) => response.json());
   }
 
   async post(url, data, headers) {
@@ -54,6 +52,14 @@ class Api {
     return fetch(`${this.ROOT_URL}${url}`, {
       method: "PUT",
       body: JSON.stringify(data),
+      headers: finalHeaders,
+    }).then((response) => response.json());
+  }
+
+  async delete(url, headers) {
+    const finalHeaders = headers ?? this.getHeaders();
+    return fetch(`${this.ROOT_URL}${url}`, {
+      method: "DELETE",
       headers: finalHeaders,
     }).then((response) => response.json());
   }

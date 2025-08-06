@@ -9,6 +9,10 @@ export default function signInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const register = async (e) => {
+    await signIn("credentials", { email, password, redirect: true, callbackUrl: "/profile" });
+  };
+
   return (
     <>
       <header className="pb-9">
@@ -57,7 +61,7 @@ export default function signInPage() {
           </div>
 
           <button
-            onClick={() => signIn("credentials", { email, password, redirect: true, callbackUrl: "/profile" })}
+            onClick={register}
             className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
           >
             Signin
@@ -65,7 +69,7 @@ export default function signInPage() {
 
           <div className="flex items-center gap-x-6 justify-center lg:text-base text-sm">
             <Link href="/signup">Register</Link>
-            <Link href="/forget">Forget password ?</Link>
+            <Link href="/forgot-password">Forget password ?</Link>
           </div>
         </div>
       </main>

@@ -1,17 +1,32 @@
 "use client";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { signOut, useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 
 import { Card } from "@/app/components/card";
-import { configuredUrlForNoCashing, skillsColors } from "@/app/utils/constants";
+import { skillsColors } from "@/app/utils/constants";
 import { httpService } from "@/services/httpService";
 
 export default function Concept() {
   const { data: session, status, update } = useSession();
+  const router = useRouter();
+
+  const deleteAccount = async () => {
+    if (!session?.user?._id) return;
+    const confirm = window.confirm("Are you sure you want to delete your account? This action is irreversible.");
+    if (!confirm) return;
+    await signOut({
+      callbackUrl: "/signin",
+      redirect: true,
+    });
+    const { ok } = await httpService.delete(`/${session.user._id}`);
+
+    if (!ok) return { ok, message: "Error deleting account" };
+    router.push("/signin");
+  };
 
   const getProfile = async (userId) => {
     try {
@@ -28,7 +43,7 @@ export default function Concept() {
   };
 
   useEffect(() => {
-   const fetchProfile = async () => {
+    const fetchProfile = async () => {
       if (session && session.user) {
         const userId = session.user._id;
         const { ok, user } = await getProfile(userId);
@@ -103,6 +118,12 @@ export default function Concept() {
           <h2 className="text-white text-center text-xl font-bold mb-10">Update</h2>
           <UserForm />
         </div>
+        <button
+          className=" border border-red-500 bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs text-red-500"
+          onClick={deleteAccount}
+        >
+          Delete my account
+        </button>
       </main>
     </>
   );
