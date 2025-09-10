@@ -2,17 +2,6 @@ import { APP_COUNTRY } from "@/app/config";
 
 import { SERVER_BASE_URL, BASE_URL } from "@/app/utils/constants";
 
-// if(window){
-// if (window.location.href.includes('findyourcofounder.es')) {
-//   ROOT_URL = "https://findyourcofounder.es";
-// } else if (window.location.href.includes('findyourcofounder.nl')) {
-//   ROOT_URL = "https://findyourcofounder.nl";
-// } else {
-//   ROOT_URL = "http://localhost:3000";
-// }
-// }
-// console.log('ROOT_URL2', ROOT_URL)
-
 class Api {
   ROOT_URL = "";
   headers = {
