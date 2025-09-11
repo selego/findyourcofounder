@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
@@ -17,7 +18,15 @@ if (ENVIRONMENT === "development") {
 
 require("./services/mongo");
 
-app.use(cors({ credentials: true, origin: [APP_URL, "https://findyourcofounder.nl/"] }));
+app.use(
+  cors({
+    credentials: true,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://findyourcofounder.nl/"]
+        : ["http://localhost:3000", "http://localhost:3001"],
+  }),
+);
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

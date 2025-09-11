@@ -3,7 +3,7 @@ const ENVIRONMENT = process.env.ENVIRONMENT || "development";
 const PORT = process.env.PORT || 8080;
 const MONGODB_ENDPOINT = process.env.MONGODB_ENDPOINT;
 const SECRET = process.env.SECRET || "not-so-secret";
-const APP_URL = "https://findyourcofounder.nl/" || "http://localhost:3000";
+const APP_URL = process.env.NODE_ENV === "production" ? "https://findyourcofounder.nl/" : "http://localhost:3000";
 const SENTRY_DSN = process.env.SENTRY_DSN || "";
 
 const SENDINBLUE_API_KEY = "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";

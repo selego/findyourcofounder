@@ -8,4 +8,6 @@ export const skillsColors = {
 
 export const BASE_URL = "http://localhost:3000";
 export const SERVER_BASE_URL =
-  process.env.NODE_ENV === "production" ? `https://api-cofounder.cleverapps.io/` : "http://localhost:8080/cofounder";
+  process.env.NODE_ENV === "production"
+    ? "https://api-cofounder.cleverapps.io/cofounder"
+    : "http://localhost:8080/cofounder";
