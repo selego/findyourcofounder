@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
-export const SearchBar = ({ users }) => {
+export const SearchBar = ({ users, total }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -11,7 +11,7 @@ export const SearchBar = ({ users }) => {
       <div className="relative">
         <input
           type="search"
-          placeholder={`Search in ${users.length} Co-Founders registered`}
+          placeholder={`Search in ${total} Co-Founders registered`}
           defaultValue={searchParams.get("search")}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

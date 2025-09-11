@@ -26,7 +26,7 @@ export default async function Home({ searchParams }) {
     <>
       <header>
         <h1 className="lg:text-5xl text-3xl text-center lg:text-shadow mb-9">FindYourCofounder</h1>
-        <SearchBar users={users} />
+        <SearchBar users={users} total={total} />
       </header>
       <main className="flex flex-col items-center py-6 pb-12">
         <div className="flex flex-wrap self-stretch justify-center gap-12 mb-8">
