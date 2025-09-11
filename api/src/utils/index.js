@@ -1,3 +1,4 @@
+const passwordValidator = require("password-validator");
 const { S3_ACCESSKEYID, S3_ENDPOINT, S3_SECRETACCESSKEY } = require("../config");
 
 const AWS = require("aws-sdk");
@@ -26,9 +27,20 @@ function uploadToS3FromBuffer(path, buffer, ContentType) {
   });
 }
 
-const BREVO_TEMPLATES = {};
+function validatePassword(password) {
+  const schema = new passwordValidator();
+  schema
+    .is()
+    .min(6) // Minimum length 6
+    .is()
+    .max(100) // Maximum length 100
+    .has()
+    .letters(); // Must have letters
+
+  return schema.validate(password);
+}
 
 module.exports = {
   uploadToS3FromBuffer,
-  BREVO_TEMPLATES,
+  validatePassword,
 };

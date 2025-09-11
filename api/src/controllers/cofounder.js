@@ -43,7 +43,7 @@ router.post("/signin", async (req, res) => {
     user.set({ last_login_at: Date.now() });
     await user.save();
 
-    const token = jwt.sign({ _id: user.id }, config.secret, { expiresIn: JWT_MAX_AGE });
+    const token = jwt.sign({ _id: user.id }, config.SECRET, { expiresIn: JWT_MAX_AGE });
     res.cookie("jwt", token, cookieOptions());
 
     return res.status(200).send({ ok: true, token, user });
@@ -81,7 +81,7 @@ router.post("/signup", async (req, res) => {
 
     const user = await UserObject.create({ ...obj });
 
-    const token = jwt.sign({ _id: user._id }, config.secret, { expiresIn: JWT_MAX_AGE });
+    const token = jwt.sign({ _id: user._id }, config.SECRET, { expiresIn: JWT_MAX_AGE });
     res.cookie("jwt", token, cookieOptions());
 
     return res.status(200).send({ user, token, ok: true });
@@ -219,20 +219,17 @@ router.post("/search", async (req, res) => {
       ];
     }
 
-    if (req.headers["app-country"]) query.app_country = req.headers["app-country"];
-
     let sort = req.body.sort ? req.body.sort : "-last_login_at";
 
-    const no_of_docs_each_page = req.body.per_page || 100;
+    const no_of_docs_each_page = req.body.per_page;
     const current_page_number = req.body.page - 1 || 0;
     let total = await UserObject.find(query).countDocuments();
+    console.log("total", total);
 
     const users = await UserObject.find(query)
       .skip(no_of_docs_each_page * current_page_number)
       .limit(no_of_docs_each_page)
       .sort(sort);
-
-    console.log("users length", users.length);
 
     return res.status(200).send({ ok: true, data: { users, total } });
   } catch (error) {
