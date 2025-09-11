@@ -232,6 +232,8 @@ router.post("/search", async (req, res) => {
       .limit(no_of_docs_each_page)
       .sort(sort);
 
+    console.log("users length", users.length);
+
     return res.status(200).send({ ok: true, data: { users, total } });
   } catch (error) {
     capture(error);
