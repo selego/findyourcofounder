@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { ACCOUNTING_BASE_URL } from "@/app/utils/constants";
 import { httpService } from "@/services/httpService";
 
 export const authOptions = {
@@ -15,20 +14,19 @@ export const authOptions = {
 
       authorize: async (credentials) => {
         try {
-          const response = await httpService
-            .post("/signin", {
-              email: credentials.email,
-              password: credentials.password,
-            })
+          const response = await httpService.post("/signin", {
+            email: credentials.email,
+            password: credentials.password,
+          });
           let { ok, token, user } = response;
           if (!ok) {
-            return null
+            return null;
           }
 
-          user = { ...user, token } // add token to user
-          return user
+          user = { ...user, token }; // add token to user
+          return user;
         } catch (error) {
-          return error
+          return error;
         }
       },
     }),
