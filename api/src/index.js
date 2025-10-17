@@ -18,13 +18,35 @@ if (ENVIRONMENT === "development") {
 
 require("./services/mongo");
 
+const allowedOrigins =
+  ENVIRONMENT === "production"
+    ? ["https://findyourcofounder.nl", "https://findyourcofounder.nl/"]
+    : ["http://localhost:3000", "http://localhost:3001"];
+
+console.log("🔧 CORS Configuration:");
+console.log("  - Environment:", ENVIRONMENT);
+console.log("  - Allowed origins:", allowedOrigins);
+
 app.use(
   cors({
     credentials: true,
-    origin:
-      ENVIRONMENT === "production"
-        ? ["https://findyourcofounder.nl", "https://findyourcofounder.nl/"]
-        : ["http://localhost:3000", "http://localhost:3001"],
+    origin: (origin, callback) => {
+      console.log("📥 Incoming request from origin:", origin);
+
+      // Allow requests with no origin (like mobile apps, Postman, or server-to-server)
+      if (!origin) {
+        console.log("✅ Request allowed (no origin)");
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        console.log("✅ Request allowed (origin in whitelist)");
+        callback(null, true);
+      } else {
+        console.log("❌ Request blocked (origin not in whitelist)");
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "App-Country"],
   }),
