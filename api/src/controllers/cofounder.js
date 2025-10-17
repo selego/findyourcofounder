@@ -124,12 +124,9 @@ router.post("/forgot_password", async (req, res) => {
     obj.set({ forgot_password_reset_token: token, forgot_password_reset_expires: Date.now() + 7200000 }); //2h
     await obj.save();
 
-    const redirectUrl =
-      process.env.NODE_ENV === "production" ? "https://www.findyourcofounder.com" : "http://localhost:3000";
-
     await sendinblue.sendTemplate(SENDINBLUE_TEMPLATES.FORGOT_PASSWORD, {
       emailTo: [{ email: obj.email }],
-      params: { cta: `${redirectUrl}/reset-password?token=${token}` },
+      params: { cta: `${config.APP_URL}/reset-password?token=${token}` },
     });
     res.status(200).send({ ok: true });
   } catch (error) {
