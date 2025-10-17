@@ -24,7 +24,10 @@ class Api {
 
   async get(url) {
     const headers = this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, { headers }).then((response) => response.json());
+    return fetch(`${this.ROOT_URL}${url}`, {
+      headers,
+      credentials: "include",
+    }).then((response) => response.json());
   }
 
   async post(url, data, headers) {
@@ -33,6 +36,7 @@ class Api {
       method: "POST",
       body: JSON.stringify(data),
       headers: finalHeaders,
+      credentials: "include",
     }).then((response) => response.json());
   }
 
@@ -42,6 +46,7 @@ class Api {
       method: "PUT",
       body: JSON.stringify(data),
       headers: finalHeaders,
+      credentials: "include",
     }).then((response) => response.json());
   }
 
@@ -50,6 +55,7 @@ class Api {
     return fetch(`${this.ROOT_URL}${url}`, {
       method: "DELETE",
       headers: finalHeaders,
+      credentials: "include",
     }).then((response) => response.json());
   }
 }
