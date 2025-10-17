@@ -241,14 +241,15 @@ router.post("/search", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const user = await UserObject.findById(req.params.id);
+    console.log("🤔 user", user);
     const obj = req.body;
-
+    console.log("🤔 obj", obj);
     user.set(obj);
 
     user.slug = slugify(user);
 
     await user.save();
-
+    console.log("🤔 user saved", user);
     res.status(200).send({ ok: true, data: user });
   } catch (error) {
     console.log("error", error);
