@@ -23,8 +23,10 @@ app.use(
     credentials: true,
     origin:
       process.env.NODE_ENV === "production"
-        ? ["https://findyourcofounder.nl/"]
+        ? ["https://findyourcofounder.nl", "https://findyourcofounder.nl/"]
         : ["http://localhost:3000", "http://localhost:3001"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "App-Country"],
   }),
 );
 app.use(cookieParser());
