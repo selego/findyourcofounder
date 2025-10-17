@@ -20,7 +20,12 @@ require("./services/mongo");
 
 const allowedOrigins =
   ENVIRONMENT === "production"
-    ? ["https://findyourcofounder.nl", "https://findyourcofounder.nl/"]
+    ? [
+        "https://findyourcofounder.nl",
+        "https://findyourcofounder.nl/",
+        "https://www.findyourcofounder.es",
+        "https://www.findyourcofounder.es/",
+      ]
     : ["http://localhost:3000", "http://localhost:3001"];
 
 console.log("🔧 CORS Configuration:");
