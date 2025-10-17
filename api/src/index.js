@@ -28,17 +28,10 @@ const allowedOrigins =
       ]
     : ["http://localhost:3000", "http://localhost:3001"];
 
-console.log("🔧 CORS Configuration:");
-console.log("  - Environment:", ENVIRONMENT);
-console.log("  - Allowed origins:", allowedOrigins);
-
 app.use(
   cors({
     credentials: true,
     origin: (origin, callback) => {
-      // Log pour production aussi (temporairement pour debug)
-      console.log("📥 Incoming request from origin:", origin);
-
       // Allow requests with no origin
       if (!origin) {
         console.log("✅ Request allowed (no origin)");
@@ -46,7 +39,6 @@ app.use(
       }
 
       if (allowedOrigins.includes(origin)) {
-        console.log("✅ Request allowed (origin in whitelist)");
         callback(null, true);
       } else {
         console.log("❌ CORS BLOCKED");
