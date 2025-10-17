@@ -32,51 +32,41 @@ console.log("🔧 CORS Configuration:");
 console.log("  - Environment:", ENVIRONMENT);
 console.log("  - Allowed origins:", allowedOrigins);
 
-// Log incoming requests for CORS debugging (only in development or when needed)
-if (ENVIRONMENT === "development") {
-  app.use((req, res, next) => {
-    console.log("📨 Incoming request:");
-    console.log("  - Method:", req.method);
-    console.log("  - Path:", req.path);
-    console.log("  - Origin header:", req.headers.origin || "NOT SET");
-    console.log("  - Referer header:", req.headers.referer || "NOT SET");
-    console.log("  - Host header:", req.headers.host || "NOT SET");
-    console.log("  - User-Agent:", req.headers["user-agent"]?.substring(0, 50) || "NOT SET");
-    next();
-  });
-}
-
 app.use(
   cors({
     credentials: true,
     origin: (origin, callback) => {
-      if (ENVIRONMENT === "development") {
-        console.log("🔍 CORS check - origin:", origin);
-      }
+      // Log pour production aussi (temporairement pour debug)
+      console.log("📥 Incoming request from origin:", origin);
 
-      // Allow requests with no origin (like mobile apps, Postman, or server-to-server)
+      // Allow requests with no origin
       if (!origin) {
-        if (ENVIRONMENT === "development") {
-          console.log("✅ CORS: Request allowed (no origin header)");
-        }
+        console.log("✅ Request allowed (no origin)");
         return callback(null, true);
       }
 
       if (allowedOrigins.includes(origin)) {
-        if (ENVIRONMENT === "development") {
-          console.log("✅ CORS: Request allowed (origin in whitelist)");
-        }
+        console.log("✅ Request allowed (origin in whitelist)");
         callback(null, true);
       } else {
-        // Always log blocked requests, even in production
-        console.log("❌ CORS: Request BLOCKED (origin not in whitelist)");
+        console.log("❌ CORS BLOCKED");
         console.log("   Received origin:", origin);
         console.log("   Allowed origins:", allowedOrigins);
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "App-Country"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "App-Country",
+      "cache-control",
+      "x-requested-with",
+      "accept",
+      "origin",
+    ],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
+    maxAge: 86400, // 24 heures
   }),
 );
 app.use(cookieParser());
