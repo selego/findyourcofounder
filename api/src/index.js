@@ -27,34 +27,43 @@ console.log("🔧 CORS Configuration:");
 console.log("  - Environment:", ENVIRONMENT);
 console.log("  - Allowed origins:", allowedOrigins);
 
-// Log all incoming requests to debug CORS
-app.use((req, res, next) => {
-  console.log("📨 Incoming request:");
-  console.log("  - Method:", req.method);
-  console.log("  - Path:", req.path);
-  console.log("  - Origin header:", req.headers.origin || "NOT SET");
-  console.log("  - Referer header:", req.headers.referer || "NOT SET");
-  console.log("  - Host header:", req.headers.host || "NOT SET");
-  console.log("  - User-Agent:", req.headers["user-agent"]?.substring(0, 50) || "NOT SET");
-  next();
-});
+// Log incoming requests for CORS debugging (only in development or when needed)
+if (ENVIRONMENT === "development") {
+  app.use((req, res, next) => {
+    console.log("📨 Incoming request:");
+    console.log("  - Method:", req.method);
+    console.log("  - Path:", req.path);
+    console.log("  - Origin header:", req.headers.origin || "NOT SET");
+    console.log("  - Referer header:", req.headers.referer || "NOT SET");
+    console.log("  - Host header:", req.headers.host || "NOT SET");
+    console.log("  - User-Agent:", req.headers["user-agent"]?.substring(0, 50) || "NOT SET");
+    next();
+  });
+}
 
 app.use(
   cors({
     credentials: true,
     origin: (origin, callback) => {
-      console.log("🔍 CORS check - origin:", origin);
+      if (ENVIRONMENT === "development") {
+        console.log("🔍 CORS check - origin:", origin);
+      }
 
       // Allow requests with no origin (like mobile apps, Postman, or server-to-server)
       if (!origin) {
-        console.log("✅ CORS: Request allowed (no origin header)");
+        if (ENVIRONMENT === "development") {
+          console.log("✅ CORS: Request allowed (no origin header)");
+        }
         return callback(null, true);
       }
 
       if (allowedOrigins.includes(origin)) {
-        console.log("✅ CORS: Request allowed (origin in whitelist)");
+        if (ENVIRONMENT === "development") {
+          console.log("✅ CORS: Request allowed (origin in whitelist)");
+        }
         callback(null, true);
       } else {
+        // Always log blocked requests, even in production
         console.log("❌ CORS: Request BLOCKED (origin not in whitelist)");
         console.log("   Received origin:", origin);
         console.log("   Allowed origins:", allowedOrigins);
