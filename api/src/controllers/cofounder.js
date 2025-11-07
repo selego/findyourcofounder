@@ -216,6 +216,8 @@ router.post("/search", async (req, res) => {
       ];
     }
 
+    if (req.headers["app-country"]) query.app_country = req.headers["app-country"];
+
     let sort = req.body.sort ? req.body.sort : "-last_login_at";
 
     const no_of_docs_each_page = req.body.per_page;
