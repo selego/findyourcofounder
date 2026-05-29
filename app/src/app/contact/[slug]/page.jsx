@@ -107,7 +107,7 @@ export default async function Contact({ params }) {
           </div>
 
           {/* Right paper column with name + meta */}
-          <div className="p-8 lg:p-10 flex flex-col">
+          <div className="p-6 sm:p-8 lg:p-10 flex flex-col">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10.5px] tracking-[0.18em] uppercase text-muted">
               <span className="inline-flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
@@ -117,7 +117,7 @@ export default async function Contact({ params }) {
               <span>Responds within 48h</span>
             </div>
 
-            <h1 className="font-display font-bold text-[44px] lg:text-[64px] tracking-[-0.04em] text-ink leading-[1] mt-5">
+            <h1 className="font-display font-bold text-[34px] sm:text-[44px] lg:text-[64px] tracking-[-0.04em] text-ink leading-[1] mt-5">
               {data.first_name}{" "}
               <span className="font-serif italic font-normal text-accent">
                 {data.last_name}
@@ -126,10 +126,10 @@ export default async function Contact({ params }) {
                 <Link
                   href={data.linkedin}
                   target="_blank"
-                  className="ml-3 align-middle text-linkedIn hover:text-ink transition-colors inline-block"
+                  className="ml-2 sm:ml-3 align-middle text-linkedIn hover:text-ink transition-colors inline-block"
                   aria-label={`${fullName} on LinkedIn`}
                 >
-                  <FaLinkedin size={26} />
+                  <FaLinkedin className="w-5 h-5 sm:w-[26px] sm:h-[26px]" />
                 </Link>
               )}
             </h1>
@@ -149,7 +149,7 @@ export default async function Contact({ params }) {
               </ul>
             )}
 
-            <div className="mt-auto pt-10 grid grid-cols-3 gap-5 border-t border-rule">
+            <div className="mt-auto pt-8 sm:pt-10 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6 sm:gap-5 border-t border-rule">
               <Meta label="City" value={data.city || "—"} />
               <Meta
                 label="Willing to invest"

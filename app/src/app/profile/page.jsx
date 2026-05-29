@@ -33,9 +33,9 @@ export default function ProfilePage() {
 
   const getProfile = async (userId) => {
     try {
-      const { ok, user } = await httpService.get(`/${userId}`);
+      const { ok, data } = await httpService.get(`/${userId}`);
       if (!ok) return { ok, message: "User not found" };
-      return { ok, user };
+      return { ok, user: data };
     } catch (error) {
       return { user: null, ok: false };
     }
@@ -45,7 +45,9 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       if (session && session.user) {
         const { ok, user } = await getProfile(session.user._id);
-        if (ok && user) await update({ user });
+        if (ok && user) {
+          await update({ user });
+        }
       }
     };
     fetchProfile();

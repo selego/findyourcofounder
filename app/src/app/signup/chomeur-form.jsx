@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { httpService } from "@/services/httpService";
 import { SKILL_TINT } from "@/app/utils/constants";
@@ -23,6 +24,8 @@ const STEPS = [
 ];
 
 export const ChomeurForm = () => {
+  const searchParams = useSearchParams();
+  const ref = searchParams.get("ref") || "";
   const [step, setStep] = useState(0);
   const [values, setValues] = useState({ skills: [] });
   const [errorSkills, setErrorSkills] = useState("");
@@ -76,17 +79,22 @@ export const ChomeurForm = () => {
       return;
     }
     setSubmitting(true);
-    const { ok, message } = await signUp(values);
+    const payload = ref ? { ...values, invited_by: ref } : values;
+    const { ok, message } = await signUp(payload);
     if (!ok) {
       setErrorGeneral(message);
       setSubmitting(false);
       return;
     }
+    if (ref && typeof window !== "undefined") {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: "invite_accepted", inviter: ref });
+    }
     await signIn("credentials", {
       email: values.email,
       password: values.password,
       redirect: true,
-      callbackUrl: "/",
+      callbackUrl: "/welcome",
     });
   };
 

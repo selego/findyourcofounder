@@ -56,7 +56,7 @@ router.post("/signin", async (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     const obj = {};
-    const { password, email, first_name, last_name, city, linkedin, motivations, business, partner, blocker, skills, invest } =
+    const { password, email, first_name, last_name, city, linkedin, motivations, business, partner, blocker, skills, invest, invited_by } =
       req.body;
     if (req.headers["app-country"]) {
       obj.app_country = req.headers["app-country"];
@@ -75,12 +75,17 @@ router.post("/signup", async (req, res) => {
     obj.blocker = blocker;
     obj.skills = skills;
     obj.invest = invest;
+    obj.invited_by = invited_by;
     obj.slug = slugify(req.body);
 
     if (password && !validatePassword(password))
       return res.status(200).send({ ok: false, user: null, code: ERROR_CODES.PASSWORD_NOT_VALIDATED });
 
     const user = await UserObject.create({ ...obj });
+
+    if (invited_by && mongoose.Types.ObjectId.isValid(invited_by)) {
+      await UserObject.updateOne({ _id: invited_by }, { $inc: { invites_accepted: 1 } });
+    }
 
     const token = jwt.sign({ _id: user._id }, config.SECRET, { expiresIn: JWT_MAX_AGE });
     res.cookie("jwt", token, cookieOptions());
@@ -285,6 +290,21 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     capture(error);
     res.status(500).send({ ok: false, code: ERROR_CODES.SERVER_ERROR, error });
+  }
+});
+
+router.post("/:id/invite-sent", async (req, res) => {
+  try {
+    const user = await UserObject.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { invites_sent: 1 } },
+      { new: true },
+    );
+    if (!user) return res.status(404).send({ ok: false, code: ERROR_CODES.USER_NOT_EXISTS });
+    return res.status(200).send({ ok: true, data: { invites_sent: user.invites_sent } });
+  } catch (error) {
+    capture(error);
+    return res.status(500).send({ ok: false, code: ERROR_CODES.SERVER_ERROR, error });
   }
 });
 

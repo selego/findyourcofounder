@@ -30,6 +30,11 @@ const Schema = new mongoose.Schema({
   business: { type: String, trim: true },
   partner: { type: String, trim: true },
   blocker: { type: String, trim: true },
+
+  invited_by: { type: String, trim: true },
+  invites_sent: { type: Number, default: 0 },
+  invites_accepted: { type: Number, default: 0 },
+
   deleted_at: { type: Date },
 });
 
