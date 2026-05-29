@@ -1,7 +1,10 @@
 // Humaaans-inspired avatar SVGs — flat, modular, near-faceless.
-// Each component takes { size, palette, className } where `palette` is a
-// { skin, clothes, pants, hair } object. Use `getHumaaansPalette(tintKey)`
-// from ./palette to map a named tint to the right palette object.
+// Each component takes { size, palette, className, headRef, eyesRef }.
+//
+// When the auth-shell wires headRef + eyesRef via useHeadTilt, the hook
+// mutates those <g> elements' style.transform directly each animation
+// frame — no React re-render, no CSS transition, head tracks the cursor
+// in real time.
 
 import { getHumaaansPalette } from "./palette";
 
@@ -12,7 +15,29 @@ const DEFAULTS = {
   handsUp: { skin: "#f4cfc1", clothes: "#f4b4b4", pants: "#1f3d2e", hair: "#241a14" },
 };
 
-export function HmnSpectacles({ size = 120, palette, className }) {
+// Set once on the head <g>; only `transform` is mutated by the RAF.
+const HEAD_STYLE = {
+  transformOrigin: "60px 58px",
+  transformBox: "view-box",
+  willChange: "transform",
+};
+
+const EYES_STYLE = {
+  transformOrigin: "60px 36px",
+  transformBox: "view-box",
+  willChange: "transform",
+};
+
+function Pupils({ innerRef, fill }) {
+  return (
+    <g ref={innerRef} style={EYES_STYLE}>
+      <circle cx="50" cy="36" r="1.6" fill={fill} />
+      <circle cx="70" cy="36" r="1.6" fill={fill} />
+    </g>
+  );
+}
+
+export function HmnSpectacles({ size = 120, palette, className, headRef, eyesRef }) {
   const p = { ...DEFAULTS.spectacles, ...(palette || {}) };
   return (
     <svg viewBox="0 0 120 180" width={size} height={size * 1.5} className={className}>
@@ -23,11 +48,14 @@ export function HmnSpectacles({ size = 120, palette, className }) {
       <ellipse cx="72" cy="172" rx="10" ry="5" fill="#1a1a1a" />
       <path d="M30 70 Q30 60 42 58 L78 58 Q90 60 90 70 L90 125 Q60 132 30 125 Z" fill={p.clothes} />
       <rect x="54" y="50" width="12" height="14" fill={p.skin} />
-      <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
-      <path d="M38 30 Q38 12 60 10 Q82 12 82 30 L82 22 Q72 16 60 16 Q48 16 38 22 Z" fill={p.hair} />
-      <circle cx="50" cy="36" r="6.5" fill="none" stroke={p.hair} strokeWidth="2.2" />
-      <circle cx="70" cy="36" r="6.5" fill="none" stroke={p.hair} strokeWidth="2.2" />
-      <line x1="56.5" y1="36" x2="63.5" y2="36" stroke={p.hair} strokeWidth="2.2" />
+      <g ref={headRef} style={HEAD_STYLE}>
+        <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
+        <path d="M38 30 Q38 12 60 10 Q82 12 82 30 L82 22 Q72 16 60 16 Q48 16 38 22 Z" fill={p.hair} />
+        <circle cx="50" cy="36" r="6.5" fill="none" stroke={p.hair} strokeWidth="2.2" />
+        <circle cx="70" cy="36" r="6.5" fill="none" stroke={p.hair} strokeWidth="2.2" />
+        <line x1="56.5" y1="36" x2="63.5" y2="36" stroke={p.hair} strokeWidth="2.2" />
+        <Pupils innerRef={eyesRef} fill={p.hair} />
+      </g>
       <rect x="22" y="68" width="14" height="44" rx="7" fill={p.clothes} />
       <rect x="84" y="68" width="14" height="44" rx="7" fill={p.clothes} />
       <circle cx="29" cy="116" r="8" fill={p.skin} />
@@ -36,7 +64,7 @@ export function HmnSpectacles({ size = 120, palette, className }) {
   );
 }
 
-export function HmnBuzz({ size = 120, palette, className }) {
+export function HmnBuzz({ size = 120, palette, className, headRef, eyesRef }) {
   const p = { ...DEFAULTS.buzz, ...(palette || {}) };
   return (
     <svg viewBox="0 0 120 180" width={size} height={size * 1.5} className={className}>
@@ -47,8 +75,11 @@ export function HmnBuzz({ size = 120, palette, className }) {
       <ellipse cx="72" cy="172" rx="10" ry="5" fill="#1a1a1a" />
       <path d="M28 70 Q28 60 42 58 L78 58 Q92 60 92 70 L92 122 Q60 130 28 122 Z" fill={p.clothes} />
       <rect x="54" y="50" width="12" height="14" fill={p.skin} />
-      <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
-      <path d="M40 28 Q40 14 60 12 Q80 14 80 28 Q80 30 80 32 Q70 30 60 30 Q50 30 40 32 Q40 30 40 28 Z" fill={p.hair} />
+      <g ref={headRef} style={HEAD_STYLE}>
+        <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
+        <path d="M40 28 Q40 14 60 12 Q80 14 80 28 Q80 30 80 32 Q70 30 60 30 Q50 30 40 32 Q40 30 40 28 Z" fill={p.hair} />
+        <Pupils innerRef={eyesRef} fill={p.hair} />
+      </g>
       <rect x="20" y="68" width="14" height="48" rx="7" fill={p.clothes} transform="rotate(8 27 92)" />
       <rect x="86" y="68" width="14" height="42" rx="7" fill={p.clothes} />
       <circle cx="22" cy="118" r="8" fill={p.skin} />
@@ -57,7 +88,7 @@ export function HmnBuzz({ size = 120, palette, className }) {
   );
 }
 
-export function HmnWave({ size = 120, palette, className }) {
+export function HmnWave({ size = 120, palette, className, headRef, eyesRef }) {
   const p = { ...DEFAULTS.wave, ...(palette || {}) };
   return (
     <svg viewBox="0 0 120 180" width={size} height={size * 1.5} className={className}>
@@ -68,11 +99,14 @@ export function HmnWave({ size = 120, palette, className }) {
       <ellipse cx="72" cy="172" rx="10" ry="5" fill="#1a1a1a" />
       <path d="M30 70 Q30 60 42 58 L78 58 Q90 60 90 70 L90 125 Q60 132 30 125 Z" fill={p.clothes} />
       <rect x="54" y="50" width="12" height="14" fill={p.skin} />
-      <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
-      <path
-        d="M36 24 Q36 8 60 8 Q84 8 84 24 L84 56 Q84 60 80 60 L80 28 Q70 24 60 24 Q50 24 40 28 L40 60 Q36 60 36 56 Z"
-        fill={p.hair}
-      />
+      <g ref={headRef} style={HEAD_STYLE}>
+        <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
+        <path
+          d="M36 24 Q36 8 60 8 Q84 8 84 24 L84 56 Q84 60 80 60 L80 28 Q70 24 60 24 Q50 24 40 28 L40 60 Q36 60 36 56 Z"
+          fill={p.hair}
+        />
+        <Pupils innerRef={eyesRef} fill={p.hair} />
+      </g>
       <rect x="18" y="36" width="14" height="48" rx="7" fill={p.clothes} transform="rotate(-22 25 60)" />
       <circle cx="14" cy="32" r="8" fill={p.skin} />
       <rect x="86" y="68" width="14" height="42" rx="7" fill={p.clothes} />
@@ -81,7 +115,7 @@ export function HmnWave({ size = 120, palette, className }) {
   );
 }
 
-export function HmnHandsUp({ size = 120, palette, className }) {
+export function HmnHandsUp({ size = 120, palette, className, headRef, eyesRef }) {
   const p = { ...DEFAULTS.handsUp, ...(palette || {}) };
   return (
     <svg viewBox="0 0 120 180" width={size} height={size * 1.5} className={className}>
@@ -92,9 +126,12 @@ export function HmnHandsUp({ size = 120, palette, className }) {
       <ellipse cx="72" cy="172" rx="10" ry="5" fill="#1a1a1a" />
       <path d="M30 70 Q30 60 42 58 L78 58 Q90 60 90 70 L90 125 Q60 132 30 125 Z" fill={p.clothes} />
       <rect x="54" y="50" width="12" height="14" fill={p.skin} />
-      <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
-      <path d="M38 30 Q38 12 60 10 Q82 12 82 30 L82 22 Q72 16 60 16 Q48 16 38 22 Z" fill={p.hair} />
-      <circle cx="60" cy="6" r="9" fill={p.hair} />
+      <g ref={headRef} style={HEAD_STYLE}>
+        <ellipse cx="60" cy="34" rx="22" ry="24" fill={p.skin} />
+        <path d="M38 30 Q38 12 60 10 Q82 12 82 30 L82 22 Q72 16 60 16 Q48 16 38 22 Z" fill={p.hair} />
+        <circle cx="60" cy="6" r="9" fill={p.hair} />
+        <Pupils innerRef={eyesRef} fill={p.hair} />
+      </g>
       <rect x="20" y="32" width="14" height="48" rx="7" fill={p.clothes} transform="rotate(-18 27 56)" />
       <rect x="86" y="32" width="14" height="48" rx="7" fill={p.clothes} transform="rotate(18 93 56)" />
       <circle cx="16" cy="28" r="8" fill={p.skin} />
@@ -114,9 +151,17 @@ const AVATAR_KINDS = {
  * High-level wrapper. Pick an avatar `kind` + a named `color` tint.
  * Example: <FYCAvatar kind="wave" color="mint" size={140} />
  */
-export function FYCAvatar({ kind = "spectacles", color = "salmon", size = 120, className }) {
+export function FYCAvatar({ kind = "spectacles", color = "salmon", size = 120, className, headRef, eyesRef }) {
   const Comp = AVATAR_KINDS[kind] || HmnSpectacles;
-  return <Comp size={size} palette={getHumaaansPalette(color)} className={className} />;
+  return (
+    <Comp
+      size={size}
+      palette={getHumaaansPalette(color)}
+      className={className}
+      headRef={headRef}
+      eyesRef={eyesRef}
+    />
+  );
 }
 
 export const AVATAR_KIND_KEYS = Object.keys(AVATAR_KINDS);
