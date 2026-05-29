@@ -1,78 +1,100 @@
 "use client";
 
 import Link from "next/link";
-import { FaArrowLeft } from "react-icons/fa6";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { AuthShell } from "@/app/components/auth-shell";
 
-export default function signInPage() {
+export default function SignInPage() {
+  const router = useRouter();
+  const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const register = async (e) => {
-    await signIn("credentials", { email, password, redirect: true, callbackUrl: "/profile" });
+  useEffect(() => {
+    if (status === "authenticated") router.replace("/profile");
+  }, [status, router]);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: true,
+      callbackUrl: "/profile",
+    });
+    setSubmitting(false);
   };
 
   return (
-    <>
-      <header className="pb-9">
-        <h1 className="lg:text-5xl text-3xl text-center lg:text-shadow">Signin</h1>
-      </header>
-      <main className="max-w-[750px] w-full mx-auto flex flex-col min-h-[calc(100vh-12rem)]">
-        <Link href="/" className="inline-flex items-center my-4 gap-4 group hover:text-yellow mb-10">
-          <FaArrowLeft size={20} className="group-hover:-translate-x-2 transition-transform" />
-          Back
-        </Link>
-
-        <div className="my-auto flex flex-col">
-          <h3 className="text-center lg:text-xl text-base mb-10">Signin to update your information</h3>
-
-          <div className="flex items-center justify-between gap-x-4 mb-6">
-            <div className="relative flex-1">
-              <input
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                type="email"
-                className="peer w-full"
-                required
-              />
-              <label
-                htmlFor="email"
-                className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-              >
-                Email*
-              </label>
-            </div>
-            <div className="relative flex-1">
-              <input
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                type="password"
-                className="peer w-full"
-                required
-              />
-              <label
-                htmlFor="current-password"
-                className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-              >
-                Password*
-              </label>
-            </div>
-          </div>
-
-          <button
-            onClick={register}
-            className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
-          >
-            Signin
-          </button>
-
-          <div className="flex items-center gap-x-6 justify-center lg:text-base text-sm">
-            <Link href="/signup">Register</Link>
-            <Link href="/forgot-password">Forget password ?</Link>
-          </div>
+    <AuthShell
+      side="signin"
+      kicker="Sign in"
+      title={
+        <>
+          Welcome <span className="font-serif italic font-normal text-accent">back.</span>
+        </>
+      }
+      footer={
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <span>
+            New here?{" "}
+            <Link href="/signup" className="text-ink font-medium underline underline-offset-4 decoration-accent decoration-2">
+              Create your card
+            </Link>
+          </span>
+          <Link href="/forgot-password" className="text-muted hover:text-ink transition-colors">
+            Forgot password?
+          </Link>
         </div>
-      </main>
-    </>
+      }
+    >
+      <form className="space-y-5" onSubmit={onSubmit}>
+        <FieldShell label="Email">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@domain.com"
+            autoComplete="email"
+          />
+        </FieldShell>
+
+        <FieldShell label="Password">
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
+        </FieldShell>
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-ink text-primary-ink text-base font-semibold hover:bg-ink-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center"
+        >
+          {submitting ? "Signing in…" : "Sign in"}{" "}
+          {!submitting && <span className="font-serif italic">→</span>}
+        </button>
+      </form>
+    </AuthShell>
+  );
+}
+
+function FieldShell({ label, children }) {
+  return (
+    <div>
+      <label className="block font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted mb-2">
+        {label}
+      </label>
+      {children}
+    </div>
   );
 }
