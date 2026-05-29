@@ -1,14 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { AuthShell } from "@/app/components/auth-shell";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (status === "authenticated") router.replace("/profile");
+  }, [status, router]);
 
   const onSubmit = async (e) => {
     e.preventDefault();

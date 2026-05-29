@@ -56,8 +56,8 @@ export default function ProfilePage() {
   return (
     <main className="bg-bg min-h-screen pt-[112px] pb-16 px-6 lg:px-10">
       <div className="max-w-[1100px] mx-auto">
-        {/* Top row — back + greeting + sign out */}
-        <div className="flex items-center justify-between mb-10">
+        {/* Top row — back link */}
+        <div className="flex items-center mb-10">
           <Link
             href="/"
             className="inline-flex items-center gap-3 text-ink-2 hover:text-ink transition-colors group"
@@ -68,28 +68,19 @@ export default function ProfilePage() {
             />
             <span className="text-sm font-medium">Back to index</span>
           </Link>
-          <button
-            onClick={() => signOut({ callbackUrl: "/signin", redirect: true })}
-            className="text-sm font-medium text-muted hover:text-ink transition-colors"
-          >
-            Sign out
-          </button>
         </div>
 
-        <header className="mb-12">
-          <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted mb-3">
-            Your space
-          </div>
-          <h1 className="font-display font-bold text-5xl lg:text-6xl tracking-tight text-ink">
-            Hey {session?.user?.first_name},{" "}
-            <span className="font-serif italic font-normal text-accent">welcome back.</span>
-          </h1>
-        </header>
-
-        {/* Card preview + copy */}
+        {/* Greeting + card preview */}
         <section className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 items-start mb-16">
           <div className="space-y-5">
-            <h2 className="font-display font-bold text-2xl tracking-tight text-ink">
+            <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted">
+              Your space
+            </div>
+            <h1 className="font-display font-bold text-5xl lg:text-6xl tracking-tight text-ink">
+              Hey {session?.user?.first_name},{" "}
+              <span className="font-serif italic font-normal text-accent">welcome back.</span>
+            </h1>
+            <h2 className="font-display font-bold text-2xl tracking-tight text-ink pt-4">
               Your card is live in the index
             </h2>
             <p className="text-ink-2 text-base leading-relaxed max-w-[520px]">
