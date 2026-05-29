@@ -256,6 +256,13 @@ const UserForm = () => {
         placeholder="A tech company with a revolutionary idea…"
         onChange={handleInputChange}
       />
+      <Textarea
+        label="What's blocking you?"
+        name="blocker"
+        value={values.blocker}
+        placeholder="Funding, technical skills, time, the right cofounder…"
+        onChange={handleInputChange}
+      />
 
       <div>
         <Label>How much can you invest?</Label>

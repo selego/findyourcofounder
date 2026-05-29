@@ -56,7 +56,7 @@ router.post("/signin", async (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     const obj = {};
-    const { password, email, first_name, last_name, city, linkedin, motivations, business, partner, skills, invest } =
+    const { password, email, first_name, last_name, city, linkedin, motivations, business, partner, blocker, skills, invest } =
       req.body;
     if (req.headers["app-country"]) {
       obj.app_country = req.headers["app-country"];
@@ -72,6 +72,7 @@ router.post("/signup", async (req, res) => {
     obj.motivations = motivations;
     obj.business = business;
     obj.partner = partner;
+    obj.blocker = blocker;
     obj.skills = skills;
     obj.invest = invest;
     obj.slug = slugify(req.body);

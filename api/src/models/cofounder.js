@@ -29,6 +29,7 @@ const Schema = new mongoose.Schema({
   motivations: { type: String, trim: true },
   business: { type: String, trim: true },
   partner: { type: String, trim: true },
+  blocker: { type: String, trim: true },
   deleted_at: { type: Date },
 });
 

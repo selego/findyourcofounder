@@ -40,7 +40,7 @@ export function AuthShell({ children, side = "signin", title, kicker, footer }) 
 
       {/* Illustration panel */}
       <aside
-        className={`hidden lg:flex relative overflow-hidden ${bg} border-l border-ink/10 items-center justify-center`}
+        className={`hidden lg:flex relative overflow-hidden ${bg} border-l border-ink/10 items-center justify-center lg:sticky lg:top-0 lg:h-screen lg:self-start`}
       >
         <div className="relative z-10 flex flex-col items-center gap-8 px-12">
           <Avatar size={200} palette={palette} />

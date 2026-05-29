@@ -310,6 +310,13 @@ function StepStory({ values, onChange, onBack, onSubmit, submitting }) {
         placeholder="A tech company with a revolutionary idea…"
         onChange={onChange}
       />
+      <Textarea
+        label="What's blocking you?"
+        name="blocker"
+        value={values.blocker}
+        placeholder="Funding, technical skills, time, the right cofounder…"
+        onChange={onChange}
+      />
 
       <label className="flex items-start gap-3 cursor-pointer">
         <input
