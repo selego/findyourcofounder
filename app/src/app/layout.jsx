@@ -1,20 +1,43 @@
 import "./globals.css";
-// import { Poppins } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import { getServerSession } from "next-auth/next";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast";
 
 import { TopBar } from "./components/top-bar";
 import { Footer } from "./components/footer";
+import { SmoothScroll } from "./components/smooth-scroll";
 
 import Provider from "./auth-provider";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 
-// const poppins = Poppins({
-//   subsets: ["latin"],
-//   variable: '--font-poppins',
-//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-// });
+// FYC typography — Geist (body, via official `geist` package since this Next
+// version's google-fonts list predates Geist's Google Fonts release),
+// Bricolage Grotesque (display headlines), Instrument Serif (italic accents),
+// JetBrains Mono (small uppercase labels).
+// GeistSans already exposes a CSS variable on its `.variable` class.
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrument",
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
 
 export const metadata = {
   title: "findyourcofounder",
@@ -25,9 +48,8 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en">
-      <body>
-        {/* <body className={poppins.className}> */}
+    <html lang="en" className={`${GeistSans.variable} ${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`}>
+      <body className="font-sans">
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-KR6T4LVH"
@@ -63,17 +85,13 @@ export default async function RootLayout({ children }) {
           })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`,
           }}
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-          rel="stylesheet"
-        />
         <Provider session={session}>
-          <TopBar />
-          <Toaster />
-          {children}
-          <Footer />
+          <SmoothScroll>
+            <TopBar />
+            <Toaster position="top-center" />
+            {children}
+            <Footer />
+          </SmoothScroll>
         </Provider>
       </body>
     </html>

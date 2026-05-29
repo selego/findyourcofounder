@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 export default function Provider({ children, session }) {
   return (
     <SessionProvider session={session}>
-      <div className="px-[5vw]">{children}</div>
+      <div>{children}</div>
     </SessionProvider>
   );
 }

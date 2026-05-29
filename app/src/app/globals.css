@@ -2,14 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Lenis smooth-scroll baseline — see lenis.dev/docs#css-required */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   FYC design tokens (light mode).
+   Tailwind utility names map to the literal tokens in tailwind.config.js
+   (bg-bg, text-ink, border-rule, …). The HSL variables below feed the
+   shadcn-style aliases (bg-background, bg-primary, …) so existing
+   components keep working while we migrate page by page.
+   ────────────────────────────────────────────────────────────────────── */
 @layer base {
+  :root {
+    /* Raw tokens — handy for arbitrary values: bg-[var(--fyc-accent)] */
+    --fyc-bg: #f4f1ea;
+    --fyc-bg-soft: #ebe6da;
+    --fyc-paper: #ffffff;
+    --fyc-ink: #0e1410;
+    --fyc-ink-2: #2a2f2c;
+    --fyc-muted: #6b716c;
+    --fyc-rule: #dcd6c7;
+    --fyc-primary: #1f3d2e;
+    --fyc-primary-ink: #fafaf5;
+    --fyc-accent: #ff5a36;
+    --fyc-accent-2: #ffd166;
+    --fyc-accent-ink: #0e1410;
+    --fyc-shadow: rgba(14, 20, 16, 1);
+
+    /* shadcn HSL aliases — values are the FYC tokens above, expressed as
+       `H S% L%` triplets so `hsl(var(--…))` resolves correctly. */
+    --background: 42 27% 94%;          /* #f4f1ea */
+    --foreground: 140 18% 6%;          /* #0e1410 */
+    --card: 0 0% 100%;                 /* #ffffff */
+    --card-foreground: 140 18% 6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 18% 6%;
+    --primary: 147 33% 18%;            /* #1f3d2e */
+    --primary-foreground: 51 36% 97%;  /* #fafaf5 */
+    --secondary: 41 31% 88%;           /* #ebe6da */
+    --secondary-foreground: 140 18% 6%;
+    --muted: 41 31% 88%;
+    --muted-foreground: 130 4% 43%;    /* #6b716c */
+    --accent: 12 100% 60%;             /* #ff5a36 */
+    --accent-foreground: 140 18% 6%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 42 31% 82%;              /* #dcd6c7 */
+    --input: 42 31% 82%;
+    --ring: 12 100% 60%;
+    --radius: 0.75rem;
+  }
+
   body {
-    @apply bg-black text-white;
-    font-family: "Poppins", sans-serif;
+    @apply bg-bg text-ink font-sans;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
   }
 
   input[type="search"] {
-    @apply bg-black text-white bg-gradient-gray appearance-none p-4 pr-10 rounded-[20px] placeholder:opacity-50 text-xs w-[315px] focus:w-[450px] focus:outline-none border border-transparent focus:border-white transition-all;
+    @apply bg-paper text-ink appearance-none p-4 pr-10 rounded-xl border border-rule placeholder:text-muted text-sm w-[315px] focus:w-[450px] focus:outline-none focus:border-ink transition-all;
   }
 
   input[type="text"],
@@ -18,7 +84,7 @@
   input[type="date"],
   input[type="number"],
   input[type="url"] {
-    @apply bg-black text-white bg-gradient-gray appearance-none px-4 lg:py-3.5 py-4 rounded-[20px] placeholder:opacity-50 text-xs lg:text-base focus:outline-none;
+    @apply w-full bg-paper text-ink appearance-none px-4 lg:py-3.5 py-4 rounded-xl border border-rule placeholder:text-muted text-sm lg:text-base focus:outline-none focus:border-ink transition-colors;
   }
 
   /* input[type="text"]:not(:focus),
@@ -51,8 +117,9 @@
     -moz-appearance: textfield;
   }
 
+  /* Light mode — keep the default calendar picker icon (no invert). */
   ::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+    opacity: 0.6;
   }
 
   ::-webkit-scrollbar {

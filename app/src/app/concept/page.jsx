@@ -1,52 +1,81 @@
 import Link from "next/link";
-import { FaArrowLeft } from "react-icons/fa6";
+import { LandingHero } from "@/app/components/landing-hero";
+import { TheCompany } from "@/app/components/the-company";
+import { HowItWorks } from "@/app/components/how-it-works";
+import { Stories } from "@/app/components/stories";
+import { CtaBanner } from "@/app/components/cta-banner";
+import { httpService } from "@/services/httpService";
 
 export default async function Concept() {
+  const getCount = async () => {
+    try {
+      const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`, { per_page: 1 });
+      if (!ok) return 0;
+      return data.total || 0;
+    } catch {
+      return 0;
+    }
+  };
+  const total = await getCount();
+
   return (
     <>
-      <header className="pb-9">
-        <h1 className="lg:text-5xl text-3xl text-center lg:text-shadow">Concept</h1>
-      </header>
-      <main className="max-w-[750px] w-full mx-auto flex flex-col gap-y-12">
-        <Link href="/" className="inline-flex items-center my-4 gap-4 group hover:text-yellow">
-          <FaArrowLeft size={20} className="group-hover:-translate-x-2 transition-transform" />
-          Back
-        </Link>
+      <LandingHero founderCount={total} />
 
-        <article className="flex flex-col gap-y-12">
-          <div className="space-y-4">
-            <p>
-              Our platform is dedicated to helping you find a Co-Founder who complements your skills. Whether you're a
-              tech whiz, a marketing guru, or a creative spirit, here you can connect with someone whose expertise fills
-              the gaps in your own.
-            </p>
+      <TheCompany founderCount={total} />
+
+      <HowItWorks />
+
+      <section className="bg-bg px-6 lg:px-10 py-24">
+        <div className="max-w-[1320px] mx-auto">
+          <div className="max-w-[760px] mb-14">
+            <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-accent mb-4">
+              Beyond the index
+            </div>
+            <h2 className="font-display font-bold text-[48px] lg:text-[64px] leading-[1.02] tracking-[-0.035em] text-ink m-0">
+              Once you&apos;re{" "}
+              <span className="font-serif italic font-normal">on it</span>.
+            </h2>
           </div>
-          <div className="space-y-4">
-            <h2 className="text-2xl">How It Works</h2>
-            <p>
-              Sign up, describe your strengths, areas of expertise, and what you're looking for. Your profile will then
-              appear on the homepage, making it easy for others to discover you and see how you can complement each
-              other.
-            </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <article className="bg-paper rounded-[22px] border-[1.5px] border-ink shadow-card p-8 lg:p-10">
+              <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted mb-4">
+                Stay updated
+              </div>
+              <h3 className="font-display font-bold text-3xl tracking-tight text-ink m-0 mb-4">
+                Track who&apos;s reading you.
+              </h3>
+              <p className="text-[17px] leading-relaxed text-ink-2 m-0">
+                With an account, you can see how many people are viewing your profile. Check back often —
+                a project that aligns with your skills and needs your expertise might just be around the corner.
+              </p>
+            </article>
+
+            <article className="bg-ink text-primary-ink rounded-[22px] border-[1.5px] border-ink shadow-card p-8 lg:p-10">
+              <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-accent-2 mb-4">
+                Upcoming features
+              </div>
+              <h3 className="font-display font-bold text-3xl tracking-tight text-primary-ink m-0 mb-4">
+                Ideas? Tell us.
+              </h3>
+              <p className="text-[17px] leading-relaxed text-primary-ink/75 m-0 mb-6">
+                We&apos;re always looking to enhance the platform. If you have suggestions, we&apos;d love to hear them.
+              </p>
+              <Link
+                href="mailto:sebastien@selego.co"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-accent text-accent-ink text-[13.5px] font-semibold hover:bg-accent/90 transition-colors"
+              >
+                sebastien@selego.co <span className="font-serif italic">→</span>
+              </Link>
+            </article>
           </div>
-          <div className="space-y-4">
-            <h2 className="text-2xl">Stay Updated</h2>
-            <p>
-              With an account, you can track how many people are viewing your profile. Don’t forget to check back often.
-              <br />A project that aligns with your skills and needs your expertise might just be around the corner.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <h2 className="text-2xl">Upcoming Features</h2>
-            <p>
-              We're always looking to enhance our platform. If you have suggestions or ideas, we'd love to hear them.
-            </p>
-            <p>
-              <a href="mailto:sebastien@selego.co">sebastien@selego.co</a>
-            </p>
-          </div>
-        </article>
-      </main>
+        </div>
+      </section>
+
+      <Stories />
+
+      <CtaBanner />
     </>
   );
 }

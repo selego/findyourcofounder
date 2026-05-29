@@ -1,264 +1,397 @@
 "use client";
 
+// Multi-step signup wizard.
+// Step 1 — identity (name, email, password, city, linkedin)
+// Step 2 — skills + investment
+// Step 3 — the three questions + GDPR consent → submit
+//
+// On submit we hit POST /signup, then sign in with credentials and
+// redirect to "/". Original validation + error codes preserved.
+
 import { useState } from "react";
 import Link from "next/link";
-import { configuredUrlForNoCashing, skillsColors } from "@/app/utils/constants";
 import { signIn } from "next-auth/react";
 import { httpService } from "@/services/httpService";
+import { SKILL_TINT } from "@/app/utils/constants";
+
+const SKILLS = ["Business", "Design", "Marketing", "Product", "Tech"];
+
+const STEPS = [
+  { id: "identity", label: "Who you are" },
+  { id: "skills", label: "What you bring" },
+  { id: "story", label: "Why you're here" },
+];
 
 export const ChomeurForm = () => {
+  const [step, setStep] = useState(0);
   const [values, setValues] = useState({ skills: [] });
-  const [errorSkills, setErrorSkills] = useState(``);
-  const [errorGeneral, setErrorGeneral] = useState(``);
-
-  const signUp = async (userBody) => {
-    const { user, token, ok, code } = await httpService.post("/signup", userBody);
-    if (code === "PASSWORD_NOT_VALIDATED") return { ok, message: "Password not validated" };
-    if (code === "USER_ALREADY_REGISTERED") return { ok, message: "User already registered" };
-    if (!ok) return { ok: false, message: "User not created" };
-    return { ok: true, message: "User created" };
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!values.skills.length) return setErrorGeneral("Please select at least one skill.");
-    const { data, ok, message } = await signUp(values);
-    if (!ok) return setErrorGeneral(message);
-    signIn("credentials", { email: values.email, password: values.password, redirect: true, callbackUrl: "/" });
-  };
-
-  const handleSkillClick = (skill) => {
-    const skills = values.skills.includes(skill) ? values.skills.filter((s) => s !== skill) : [...values.skills, skill];
-    if (skills.length > 3) return setErrorSkills(`You cannot select more than 3 skills.`);
-    setErrorGeneral(``);
-    setErrorSkills(``);
-    setValues({ ...values, skills });
-  };
+  const [errorSkills, setErrorSkills] = useState("");
+  const [errorGeneral, setErrorGeneral] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  const handleSkillClick = (skill) => {
+    const next = values.skills.includes(skill)
+      ? values.skills.filter((s) => s !== skill)
+      : [...values.skills, skill];
+    if (next.length > 3) {
+      setErrorSkills("You can pick at most 3 skills.");
+      return;
+    }
+    setErrorSkills("");
+    setErrorGeneral("");
+    setValues({ ...values, skills: next });
+  };
+
+  const goNext = (e) => {
+    e?.preventDefault();
+    if (step === 1 && !values.skills.length) {
+      setErrorGeneral("Please select at least one skill.");
+      return;
+    }
+    setErrorGeneral("");
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  };
+
+  const goBack = () => {
+    setErrorGeneral("");
+    setStep((s) => Math.max(s - 1, 0));
+  };
+
+  const signUp = async (userBody) => {
+    const { code, ok } = await httpService.post("/signup", userBody);
+    if (code === "PASSWORD_NOT_VALIDATED") return { ok, message: "Password not validated" };
+    if (code === "USER_ALREADY_REGISTERED") return { ok, message: "An account with this email already exists." };
+    if (!ok) return { ok: false, message: "We couldn't create your account. Try again." };
+    return { ok: true };
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!values.skills.length) {
+      setErrorGeneral("Please select at least one skill.");
+      return;
+    }
+    setSubmitting(true);
+    const { ok, message } = await signUp(values);
+    if (!ok) {
+      setErrorGeneral(message);
+      setSubmitting(false);
+      return;
+    }
+    await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: true,
+      callbackUrl: "/",
+    });
+  };
+
   return (
-    <form className="space-y-8" onSubmit={handleSubmit}>
-      <>
-        <h4 className="mt-6 mb-4 text-center">What are your skills?*</h4>
-        <div className="flex items-center gap-x-2 justify-center mb-8">
-          {["Business", "Design", "Marketing", "Product", "Tech"].map((skill) => (
-            <button
-              type="button"
-              key={skill}
-              className={`text-xs  py-1 px-4 rounded-full hover:shadow-card transition-shadow  ${
-                values.skills.includes(skill) ? skillsColors[skill] : "bg-gradient-gray"
-              }`}
-              onClick={() => handleSkillClick(skill)}
-            >
-              {skill}
-            </button>
-          ))}
-        </div>
-        {errorSkills && <p className="text-xs text-red-500 text-center">{errorSkills}</p>}
-      </>
-      <fieldset className="p-4 pt-5 border border-white rounded-[10px] relative space-y-4">
-        <p className="bg-black absolute left-4 -top-[12px]">Contact</p>
-        <div className="flex items-center gap-x-4">
-          <div className="relative flex-1">
-            <input
-              id="last-name"
-              name="last_name"
-              type="text"
-              className="peer w-full"
-              required
-              onChange={handleInputChange}
-            />
-            <label
-              htmlFor="last-name"
-              className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-            >
-              Last name*
-            </label>
-          </div>
-          <div className="relative flex-1">
-            <input
-              id="first-name"
-              name="first_name"
-              type="text"
-              className="peer w-full"
-              required
-              onChange={handleInputChange}
-            />
-            <label
-              htmlFor="first-name"
-              className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-              pattern="[A-Za-zÜ-ü\s\-]{1,50}"
-            >
-              First name*
-            </label>
-          </div>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="relative w-[60%]">
-            <input id="email" name="email" type="email" className="peer w-full" required onChange={handleInputChange} />
-            <label
-              htmlFor="email"
-              className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-            >
-              Email*
-            </label>
-          </div>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="relative w-[60%]">
-            <input
-              id="city"
-              name="city"
-              type="text"
-              className="peer w-full"
-              required
-              pattern="[A-Za-zÜ-ü\s\-]{1,50}"
-              onChange={handleInputChange}
-            />
-            <label
-              htmlFor="city"
-              className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-            >
-              City*
-            </label>
-          </div>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="relative w-[60%]">
-            <input
-              id="linkedin"
-              name="linkedin"
-              type="url"
-              className="peer w-full"
-              required
-              pattern="(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/.+"
-              onChange={handleInputChange}
-            />
-            <label
-              htmlFor="linkedin"
-              className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-            >
-              LinkedIn*
-            </label>
-          </div>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="relative flex-1">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="peer w-full"
-              required
-              minLength={8}
-              maxLength={50}
-              onChange={handleInputChange}
-            />
-            <label
-              htmlFor="password"
-              className="absolute lg:text-base text-sm left-4 top-1/2 -translate-y-9 text-red-500 transition-all text-yellow"
-            >
-              Password*
-            </label>
-          </div>
-        </div>
-      </fieldset>
-      <fieldset className="space-y-2">
-        <label htmlFor="motivations" className="text-center block">
-          What motivates you?*
-        </label>
-        <textarea
-          name="motivations"
-          id="motivations"
-          placeholder="The challenge, the desire to innovate..."
-          rows={5}
+    <div>
+      <StepIndicator step={step} />
+
+      {step === 0 && (
+        <StepIdentity values={values} onChange={handleInputChange} onNext={goNext} />
+      )}
+      {step === 1 && (
+        <StepSkills
+          values={values}
+          onPick={handleSkillClick}
           onChange={handleInputChange}
-          minLength={10}
-          maxLength={500}
-          required
-          className="w-full bg-black text-white bg-gradient-gray appearance-none px-4 lg:py-3.5 py-4 rounded-[20px] placeholder:opacity-50 text-xs lg:text-base outline-none focus:outline-red-500 resize-none"
+          onBack={goBack}
+          onNext={goNext}
+          errorSkills={errorSkills}
         />
-      </fieldset>
-      <fieldset className="space-y-2">
-        <label htmlFor="partner" className="text-center block">
-          Your ideal partner?*
-        </label>
-        <textarea
-          name="partner"
-          id="partner"
+      )}
+      {step === 2 && (
+        <StepStory
+          values={values}
           onChange={handleInputChange}
-          placeholder="Someone who isn't afraid to get wet, who has a head on their shoulders..."
-          rows={5}
-          minLength={10}
-          maxLength={500}
-          required
-          className="w-full bg-black text-white bg-gradient-gray appearance-none px-4 lg:py-3.5 py-4 rounded-[20px] placeholder:opacity-50 text-xs lg:text-base outline-none focus:outline-red-500 resize-none"
+          onBack={goBack}
+          onSubmit={handleSubmit}
+          submitting={submitting}
         />
-      </fieldset>
-      <fieldset className="space-y-2">
-        <label htmlFor="business" className="text-center block">
-          Your dream business?*
-        </label>
-        <textarea
-          name="business"
-          id="business"
-          onChange={handleInputChange}
-          placeholder="A tech company, with a revolutionary idea..."
-          rows={5}
-          minLength={10}
-          maxLength={500}
-          required
-          className="w-full bg-black text-white bg-gradient-gray appearance-none px-4 lg:py-3.5 py-4 rounded-[20px] placeholder:opacity-50 text-xs lg:text-base outline-none focus:outline-red-500 resize-none"
-        />
-      </fieldset>
-      <fieldset className="flex items-center justify-center gap-x-8">
-        <h4>How much can you invest?</h4>
-        <div className="relative w-full max-w-[250px]">
-          <input
-            id="invest"
-            name="invest"
-            type="number"
-            className="w-full"
-            min={0}
-            max={1000000}
-            required
-            onChange={handleInputChange}
-          />
-          <label htmlFor="invest" className="absolute lg:text-base left-4 top-1/2 -translate-y-10 text-yellow text-xs">
-            Investment
-          </label>
-        </div>
-      </fieldset>
-      <label htmlFor="checkbox" className="flex items-center justify-center gap-x-1">
-        <input
-          type="checkbox"
-          id="checkbox"
-          name="gdpr"
-          className="w-[18px] h-[18px] accent-yellow"
-          required
-          // checked={values.gdpr}
-          // onChange={() => handleInputChange({ target: { name: 'gdpr', value: !values.gdpr } })}
-        />
-        <p className="text-xs">
-          I accept{" "}
-          <Link href="/gdpr" target="_blank" className="underline">
-            the processing of my personal data
-          </Link>
-        </p>
-      </label>
-      <p className="text-xs text-red-500 text-center">{errorGeneral}</p>
-      <div className="flex items-center justify-center">
-        <button
-          type="submit"
-          onClick={handleSubmit}
-          className="bg-gradient-gray px-12 lg:py-4 py-3 rounded-[20px] w-max mx-auto hover:opacity-75 transition-opacity mb-10 lg:text-base text-xs"
-        >
-          Register
-        </button>
-      </div>
-    </form>
+      )}
+
+      {errorGeneral && (
+        <p className="text-sm text-red-500 mt-4">{errorGeneral}</p>
+      )}
+    </div>
   );
 };
+
+function StepIndicator({ step }) {
+  return (
+    <div className="mb-8 flex items-center gap-3">
+      {STEPS.map((s, i) => (
+        <div key={s.id} className="flex items-center gap-3 flex-1">
+          <div
+            className={`w-7 h-7 rounded-full grid place-items-center font-mono text-xs border-[1.5px] ${
+              i <= step ? "bg-ink text-primary-ink border-ink" : "bg-paper text-muted border-rule"
+            }`}
+          >
+            {i + 1}
+          </div>
+          <span
+            className={`font-mono text-[11px] tracking-[0.16em] uppercase ${
+              i === step ? "text-ink" : "text-muted"
+            }`}
+          >
+            {s.label}
+          </span>
+          {i < STEPS.length - 1 && (
+            <div className={`h-px flex-1 ${i < step ? "bg-ink" : "bg-rule"}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StepIdentity({ values, onChange, onNext }) {
+  return (
+    <form className="space-y-5" onSubmit={onNext}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field label="First name">
+          <input
+            name="first_name"
+            type="text"
+            value={values.first_name || ""}
+            onChange={onChange}
+            required
+            pattern="[A-Za-zÜ-ü\s\-]{1,50}"
+          />
+        </Field>
+        <Field label="Last name">
+          <input
+            name="last_name"
+            type="text"
+            value={values.last_name || ""}
+            onChange={onChange}
+            required
+          />
+        </Field>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Field label="Email">
+        <input
+          name="email"
+          type="email"
+          value={values.email || ""}
+          onChange={onChange}
+          autoComplete="email"
+          required
+        />
+      </Field>
+      <Field label="Password">
+        <input
+          name="password"
+          type="password"
+          value={values.password || ""}
+          onChange={onChange}
+          minLength={8}
+          maxLength={50}
+          autoComplete="new-password"
+          required
+        />
+      </Field>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field label="City">
+          <input
+            name="city"
+            type="text"
+            value={values.city || ""}
+            onChange={onChange}
+            pattern="[A-Za-zÜ-ü\s\-]{1,50}"
+            required
+          />
+        </Field>
+        <Field label="LinkedIn URL">
+          <input
+            name="linkedin"
+            type="url"
+            value={values.linkedin || ""}
+            onChange={onChange}
+            pattern="(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/.+"
+            required
+          />
+        </Field>
+      </div>
+
+      <NavRow
+        next="Continue"
+        leading={
+          <span className="text-sm text-ink-2">
+            Already have an account?{" "}
+            <Link
+              href="/signin"
+              className="text-ink font-medium underline underline-offset-4 decoration-accent decoration-2"
+            >
+              Sign in
+            </Link>
+          </span>
+        }
+      />
+    </form>
+  );
+}
+
+function StepSkills({ values, onPick, onChange, onBack, onNext, errorSkills }) {
+  return (
+    <form className="space-y-8" onSubmit={onNext}>
+      <div>
+        <Field label="What are your skills? Pick up to 3.">
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            {SKILLS.map((skill) => {
+              const active = values.skills.includes(skill);
+              return (
+                <button
+                  type="button"
+                  key={skill}
+                  className={`text-sm py-2 px-4 rounded-full border transition-all ${
+                    active
+                      ? `${SKILL_TINT[skill]} border-transparent`
+                      : "bg-bg-soft text-ink-2 border-rule hover:border-ink"
+                  }`}
+                  onClick={() => onPick(skill)}
+                >
+                  {skill}
+                </button>
+              );
+            })}
+          </div>
+        </Field>
+        {errorSkills && <p className="text-xs text-red-500 mt-2">{errorSkills}</p>}
+      </div>
+
+      <Field label="How much can you invest? (€)">
+        <input
+          name="invest"
+          type="number"
+          value={values.invest ?? ""}
+          onChange={onChange}
+          min={0}
+          max={1000000}
+          required
+        />
+      </Field>
+
+      <NavRow onBack={onBack} next="Continue" />
+    </form>
+  );
+}
+
+function StepStory({ values, onChange, onBack, onSubmit, submitting }) {
+  return (
+    <form className="space-y-6" onSubmit={onSubmit}>
+      <Textarea
+        label="What motivates you?"
+        name="motivations"
+        value={values.motivations}
+        placeholder="The challenge, the desire to innovate…"
+        onChange={onChange}
+      />
+      <Textarea
+        label="Your ideal partner?"
+        name="partner"
+        value={values.partner}
+        placeholder="Someone who isn't afraid to get wet…"
+        onChange={onChange}
+      />
+      <Textarea
+        label="Your dream business?"
+        name="business"
+        value={values.business}
+        placeholder="A tech company with a revolutionary idea…"
+        onChange={onChange}
+      />
+
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          name="gdpr"
+          className="w-[18px] h-[18px] mt-0.5 accent-accent flex-shrink-0"
+          required
+        />
+        <span className="text-sm text-ink-2">
+          I accept{" "}
+          <Link href="/gdpr" target="_blank" className="text-ink underline underline-offset-2 decoration-accent decoration-2">
+            the processing of my personal data
+          </Link>
+          .
+        </span>
+      </label>
+
+      <NavRow
+        onBack={onBack}
+        next={submitting ? "Creating your card…" : "Create my card"}
+        nextDisabled={submitting}
+        nextType="submit"
+      />
+    </form>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div>
+      <label className="block font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted mb-2">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function Textarea({ label, name, placeholder, value, onChange }) {
+  return (
+    <div>
+      <label className="block font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted mb-2">
+        {label}
+      </label>
+      <textarea
+        name={name}
+        value={value || ""}
+        placeholder={placeholder}
+        onChange={onChange}
+        rows={4}
+        minLength={10}
+        maxLength={500}
+        required
+        className="w-full bg-paper text-ink border border-rule rounded-xl px-4 py-3.5 text-sm placeholder:text-muted focus:outline-none focus:border-ink resize-none transition-colors"
+      />
+    </div>
+  );
+}
+
+function NavRow({ onBack, next, nextDisabled, nextType = "submit", leading }) {
+  return (
+    <div className="flex items-center justify-between gap-3 pt-2">
+      {onBack ? (
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-full border-[1.5px] border-ink text-ink text-sm font-medium hover:bg-ink hover:text-primary-ink transition-colors"
+        >
+          <span className="font-serif italic">←</span> Back
+        </button>
+      ) : leading ? (
+        leading
+      ) : (
+        <span />
+      )}
+      <button
+        type={nextType}
+        disabled={nextDisabled}
+        className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-ink text-primary-ink text-sm font-semibold hover:bg-ink-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {next} <span className="font-serif italic">→</span>
+      </button>
+    </div>
+  );
+}
