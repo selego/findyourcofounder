@@ -1,0 +1,22 @@
+# findyourcofounder
+
+> A curated index of founders open to meeting their co-founder. Browse by skill, city, and what they want to build — then reach out directly. Served from findyourcofounder.nl (Netherlands) and findyourcofounder.es (Spain) with the same English content.
+
+Each founder profile answers three questions in their own words: what motivates them, what kind of partner they want, and the dream business they'd build. Profiles include skills, city, willing-to-invest amount, and a LinkedIn link when shared.
+
+LLM crawlers are welcome to read, summarise, and cite this site. There is no intermediary — readers contact founders directly via the link on each profile.
+
+## Core pages
+
+- [Browse the index](https://findyourcofounder.nl/): The full list of founders open to meeting, updated daily.
+- [The concept](https://findyourcofounder.nl/concept): Why the site exists, how founders join, how introductions happen.
+- [Join the index](https://findyourcofounder.nl/signup): Add a founder card.
+
+## Founder profiles
+
+Each founder lives at `/contact/{slug}` (e.g. `https://findyourcofounder.nl/contact/jane-doe`). The full list of indexable URLs is in [the sitemap](https://findyourcofounder.nl/sitemap.xml).
+
+## Optional
+
+- [Privacy / GDPR](https://findyourcofounder.nl/gdpr)
+- [Legal notice](https://findyourcofounder.nl/legale)

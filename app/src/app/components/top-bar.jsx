@@ -16,9 +16,9 @@ const LANDING_PATH = "/concept";
 
 const NAV_LINKS = [
   { label: "The index", href: "/" },
+  { label: "By skill", href: "/skills" },
+  { label: "By city", href: "/cities" },
   { label: "The concept", href: "/concept" },
-  { label: "How it works", href: "/concept#how" },
-  { label: "Stories", href: "/concept#stories" },
 ];
 
 export const TopBar = () => {
