@@ -3,32 +3,6 @@ import { SearchBar } from "@/app/components/search-bar";
 import { Card } from "@/app/components/card";
 import { httpService } from "@/services/httpService";
 import { PaginationWrapper } from "@/app/components/ui/pagination";
-import { JsonLd } from "@/app/components/json-ld";
-import { getSiteUrl, getLanguageAlternates } from "@/app/utils/constants";
-
-const SITE_URL = getSiteUrl();
-
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-  ],
-};
-
-export const metadata = {
-  title: "Browse founders open to meeting",
-  description:
-    "A curated, daily-updated index of founders open to meeting a co-founder. Search by name, filter by skill or city, then reach out directly — no intermediaries.",
-  alternates: { canonical: "/", languages: getLanguageAlternates("/") },
-  openGraph: {
-    title: "Browse founders open to meeting",
-    description:
-      "A curated, daily-updated index of founders open to meeting a co-founder.",
-    url: "/",
-    type: "website",
-  },
-};
 
 export default async function Home({ searchParams }) {
   const currentPage = parseInt(searchParams.page) || 1;
@@ -51,7 +25,6 @@ export default async function Home({ searchParams }) {
 
   return (
     <main className="bg-bg min-h-screen pt-[100px] pb-24 px-6 lg:px-10">
-      <JsonLd data={breadcrumbLd} />
       <section className="max-w-[1320px] mx-auto">
         <div className="mb-5">
           <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-muted mb-4">

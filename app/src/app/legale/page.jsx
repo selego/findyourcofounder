@@ -1,13 +1,5 @@
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
-import { getLanguageAlternates } from "@/app/utils/constants";
-
-export const metadata = {
-  title: "Legal notice",
-  description:
-    "Legal terms and company information for findyourcofounder, the index of founders open to meeting their co-founder.",
-  alternates: { canonical: "/legale", languages: getLanguageAlternates("/legale") },
-};
 
 export default async function Legale() {
   return (

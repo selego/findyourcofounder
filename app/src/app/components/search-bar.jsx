@@ -21,12 +21,8 @@ export const SearchBar = ({ total }) => {
   }, [value, router]);
 
   return (
-    <div className="relative shrink-0" role="search">
-      <label htmlFor="founder-search" className="sr-only">
-        Search founders by name, skill, or city
-      </label>
+    <div className="relative shrink-0">
       <input
-        id="founder-search"
         type="search"
         placeholder={`Search ${total} founders…`}
         value={value}
@@ -34,7 +30,6 @@ export const SearchBar = ({ total }) => {
       />
       <FaMagnifyingGlass
         size={16}
-        aria-hidden="true"
         className="absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
       />
     </div>

@@ -1,6 +1,6 @@
 import { APP_COUNTRY } from "@/app/config";
 
-import { SERVER_BASE_URL } from "@/app/utils/constants";
+import { SERVER_BASE_URL, BASE_URL } from "@/app/utils/constants";
 
 class Api {
   ROOT_URL = "";

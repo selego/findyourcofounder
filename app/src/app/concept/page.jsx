@@ -5,61 +5,6 @@ import { HowItWorks } from "@/app/components/how-it-works";
 import { Stories } from "@/app/components/stories";
 import { CtaBanner } from "@/app/components/cta-banner";
 import { httpService } from "@/services/httpService";
-import { JsonLd } from "@/app/components/json-ld";
-import { getSiteUrl, getLanguageAlternates } from "@/app/utils/constants";
-
-const SITE_URL = getSiteUrl();
-
-const howToLd = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  name: "How to find a co-founder on findyourcofounder",
-  description:
-    "Write a three-question profile, browse the index, and meet founders for coffee.",
-  step: [
-    {
-      "@type": "HowToStep",
-      position: 1,
-      name: "Write your profile",
-      text: "Three questions. What motivates you, what kind of partner you want, the dream business you'd build. No buzzwords. Six minutes.",
-    },
-    {
-      "@type": "HowToStep",
-      position: 2,
-      name: "Browse the index",
-      text: "Filter by skills, sector, city, or capital. Read what drives every founder before you ever send a message.",
-    },
-    {
-      "@type": "HowToStep",
-      position: 3,
-      name: "Meet for coffee",
-      text: "Send a note, set a coffee, see if it clicks. We charge nothing to write. The hard part is the conversation.",
-    },
-  ],
-};
-
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-    { "@type": "ListItem", position: 2, name: "Concept", item: `${SITE_URL}/concept` },
-  ],
-};
-
-export const metadata = {
-  title: "How findyourcofounder works",
-  description:
-    "Why the index exists, how founders join, and how introductions happen. No intermediaries, no matching algorithms — just a curated list and a direct line.",
-  alternates: { canonical: "/concept", languages: getLanguageAlternates("/concept") },
-  openGraph: {
-    title: "How findyourcofounder works",
-    description:
-      "Why the index exists, how founders join, and how introductions happen.",
-    url: "/concept",
-    type: "article",
-  },
-};
 
 export default async function Concept() {
   const getCount = async () => {
@@ -75,8 +20,6 @@ export default async function Concept() {
 
   return (
     <>
-      <JsonLd data={howToLd} />
-      <JsonLd data={breadcrumbLd} />
       <LandingHero founderCount={total} />
 
       <TheCompany founderCount={total} />

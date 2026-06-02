@@ -1,3 +1,0 @@
-Contact: mailto:sebastien@selego.co
-Preferred-Languages: en
-Canonical: https://findyourcofounder.nl/.well-known/security.txt

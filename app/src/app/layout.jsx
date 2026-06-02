@@ -11,15 +11,6 @@ import { SmoothScroll } from "./components/smooth-scroll";
 
 import Provider from "./auth-provider";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import {
-  getSiteUrl,
-  SITE_URL_NL,
-  SITE_URL_ES,
-  SITE_LOCALES,
-} from "./utils/constants";
-import { JsonLd } from "./components/json-ld";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // FYC typography — Geist (body, via official `geist` package since this Next
 // version's google-fonts list predates Geist's Google Fonts release),
@@ -48,94 +39,9 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
-const APP_COUNTRY = process.env.APP_COUNTRY ?? "nl";
-const SITE_URL = getSiteUrl(APP_COUNTRY);
-
 export const metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: "findyourcofounder — find your co-founder",
-    template: "%s · findyourcofounder",
-  },
-  description:
-    "A curated index of founders open to meeting their co-founder. Browse by skill, city, and what they want to build — then reach out directly.",
-  applicationName: "findyourcofounder",
-  keywords: [
-    "co-founder",
-    "find a co-founder",
-    "startup co-founder",
-    "technical co-founder",
-    "business co-founder",
-    "founder matchmaking",
-  ],
-  authors: [{ name: "findyourcofounder" }],
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en-NL": SITE_URL_NL,
-      "en-ES": SITE_URL_ES,
-      "x-default": SITE_URL_NL,
-    },
-  },
-  openGraph: {
-    type: "website",
-    siteName: "findyourcofounder",
-    url: SITE_URL,
-    locale: SITE_LOCALES[APP_COUNTRY] ?? "en_NL",
-    alternateLocale: ["en_NL", "en_ES"],
-    title: "findyourcofounder — find your co-founder",
-    description:
-      "A curated index of founders open to meeting their co-founder. Browse by skill, city, and what they want to build.",
-    images: [`${SITE_URL}/opengraph-image`],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "findyourcofounder — find your co-founder",
-    description:
-      "A curated index of founders open to meeting their co-founder.",
-    images: [`${SITE_URL}/twitter-image`],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
-  icons: { icon: "/favicon.ico" },
-  manifest: "/manifest.webmanifest",
-};
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#f4f1ea",
-};
-
-const organizationLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "findyourcofounder",
-  url: SITE_URL,
-  logo: `${SITE_URL}/opengraph-image`,
-  sameAs: [SITE_URL_NL, SITE_URL_ES],
-};
-
-const websiteLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "findyourcofounder",
-  url: SITE_URL,
-  inLanguage: "en",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: `${SITE_URL}/?search={search_term_string}`,
-    "query-input": "required name=search_term_string",
-  },
+  title: "findyourcofounder",
+  description: "You are looking for a Co-Founder, register now and find your Co-Founder.",
 };
 
 export default async function RootLayout({ children }) {
@@ -144,8 +50,6 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`}>
       <body className="font-sans">
-        <JsonLd data={organizationLd} />
-        <JsonLd data={websiteLd} />
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-KR6T4LVH"
@@ -187,8 +91,6 @@ export default async function RootLayout({ children }) {
             <Toaster position="top-center" />
             {children}
             <Footer />
-            <Analytics />
-            <SpeedInsights />
           </SmoothScroll>
         </Provider>
       </body>

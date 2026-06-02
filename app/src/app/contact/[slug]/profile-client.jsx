@@ -20,16 +20,6 @@ export function ProfileClickPing({ user }) {
     httpService
       .put(`/${user._id}`, { clicks: (user.clicks ?? 0) + 1 })
       .catch(() => {});
-    if (typeof window !== "undefined") {
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: "profile_view",
-        profile_id: user._id,
-        profile_slug: user.slug,
-        profile_skill: user.skills?.[0],
-        profile_city: user.city,
-      });
-    }
   }, [user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
   return null;
 }

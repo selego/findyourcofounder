@@ -14,21 +14,16 @@ const COLUMNS = [
     ],
   },
   {
-    heading: "By skill",
-    links: [
-      { label: "Tech co-founders", href: "/skills/tech" },
-      { label: "Product co-founders", href: "/skills/product" },
-      { label: "Design co-founders", href: "/skills/design" },
-      { label: "Business co-founders", href: "/skills/business" },
-      { label: "Marketing co-founders", href: "/skills/marketing" },
-    ],
-  },
-  {
     heading: "About",
     links: [
       { label: "The concept", href: "/concept" },
       { label: "How it works", href: "/concept#how" },
-      { label: "Browse by city", href: "/cities" },
+      { label: "Stories", href: "/concept#stories" },
+    ],
+  },
+  {
+    heading: "Connect",
+    links: [
       { label: "Email us", href: "mailto:sebastien@selego.co" },
     ],
   },
