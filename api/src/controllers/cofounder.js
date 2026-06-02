@@ -10,7 +10,7 @@ const UserObject = require("../models/cofounder");
 const config = require("../config");
 const { validatePassword, uploadToS3FromBuffer } = require("../utils");
 const { SENDINBLUE_TEMPLATES } = require("../utils/constants");
-const { ERROR_CODES } = require("../utils/errorCodes");
+const ERROR_CODES = require("../utils/errorCodes");
 
 const sendinblue = require("../services/brevo");
 const { capture } = require("../services/sentry");
