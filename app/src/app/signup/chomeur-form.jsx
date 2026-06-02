@@ -8,7 +8,7 @@
 // On submit we hit POST /signup, then sign in with credentials and
 // redirect to "/". Original validation + error codes preserved.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -31,12 +31,22 @@ export const ChomeurForm = () => {
   const [errorSkills, setErrorSkills] = useState("");
   const [errorGeneral, setErrorGeneral] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const startedRef = useRef(false);
+
+  const fireSignupStarted = () => {
+    if (startedRef.current || typeof window === "undefined") return;
+    startedRef.current = true;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: "signup_started", inviter: ref || null });
+  };
 
   const handleInputChange = (e) => {
+    fireSignupStarted();
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const handleSkillClick = (skill) => {
+    fireSignupStarted();
     const next = values.skills.includes(skill)
       ? values.skills.filter((s) => s !== skill)
       : [...values.skills, skill];
@@ -86,9 +96,18 @@ export const ChomeurForm = () => {
       setSubmitting(false);
       return;
     }
-    if (ref && typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: "invite_accepted", inviter: ref });
+      window.dataLayer.push({
+        event: "signup_submitted",
+        skills: values.skills,
+        city: values.city,
+        invest: values.invest,
+        inviter: ref || null,
+      });
+      if (ref) {
+        window.dataLayer.push({ event: "invite_accepted", inviter: ref });
+      }
     }
     await signIn("credentials", {
       email: values.email,

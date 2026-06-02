@@ -1,61 +1,83 @@
-//app/sitemap.js
+// app/sitemap.js
+//
+// Dynamic sitemap. One sitemap per country domain (`.nl` or `.es`) — the
+// build env's APP_COUNTRY decides which TLD this build emits. Robots.txt
+// advertises both sitemap URLs so search engines fetch each from its own host.
 
 import { httpService } from "@/services/httpService";
 import { APP_COUNTRY } from "@/app/config";
+import { getSiteUrl, SKILL_TINT } from "@/app/utils/constants";
+import { slugifyCity } from "@/lib/utils";
 
-// Sitemap configuration
-export const dynamic = 'force-dynamic'; // To ensure dynamic generation of the sitemap
+// Hourly ISR — crawlers (especially Google) hit /sitemap.xml many times a day;
+// force-dynamic would re-fetch the full founder list every request.
+export const revalidate = 3600;
+
+const PRIORITY = {
+  home: 1.0,
+  concept: 0.8,
+  hubIndex: 0.7,
+  hub: 0.6,
+  profile: 0.7,
+  signup: 0.6,
+  legal: 0.3,
+};
 
 export default async function getSitemap() {
-  const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`);
+  const base = getSiteUrl(APP_COUNTRY);
+  const now = new Date();
 
-  const extension = APP_COUNTRY === "nl" ? APP_COUNTRY : "es";
-
-  // Array to hold all URLs
   const urls = [
-    {
-      url: `https://findyourcofounder.${extension}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `https://findyourcofounder.${extension}/gdpr`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `https://findyourcofounder.${extension}/concept`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `https://findyourcofounder.${extension}/legale`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    }
+    { url: `${base}`, lastModified: now, changeFrequency: "daily", priority: PRIORITY.home },
+    { url: `${base}/concept`, lastModified: now, changeFrequency: "monthly", priority: PRIORITY.concept },
+    { url: `${base}/signup`, lastModified: now, changeFrequency: "monthly", priority: PRIORITY.signup },
+    { url: `${base}/skills`, lastModified: now, changeFrequency: "weekly", priority: PRIORITY.hubIndex },
+    { url: `${base}/cities`, lastModified: now, changeFrequency: "weekly", priority: PRIORITY.hubIndex },
+    { url: `${base}/gdpr`, lastModified: now, changeFrequency: "yearly", priority: PRIORITY.legal },
+    { url: `${base}/legale`, lastModified: now, changeFrequency: "yearly", priority: PRIORITY.legal },
   ];
 
-  // Loop through dynamic users and add to URLs array
-  (data?.users || []).forEach((item) => {
+  for (const skill of Object.keys(SKILL_TINT)) {
     urls.push({
-      url: `https://findyourcofounder.${extension}/contact/${item.slug}`,
-      lastModified: new Date(),
+      url: `${base}/skills/${skill.toLowerCase()}`,
+      lastModified: now,
       changeFrequency: "weekly",
-      priority: 1,
+      priority: PRIORITY.hub,
     });
-  });
+  }
 
-  return urls
+  try {
+    const { ok, data } = await httpService.post(
+      `/search?timestamp=${now.getTime()}`,
+      { per_page: 1000 },
+    );
+    if (ok) {
+      const cities = new Set();
+      for (const user of data?.users || []) {
+        if (user.slug) {
+          const updated = user.updated_at ? new Date(user.updated_at) : now;
+          urls.push({
+            url: `${base}/contact/${user.slug}`,
+            lastModified: updated,
+            changeFrequency: "weekly",
+            priority: PRIORITY.profile,
+          });
+        }
+        if (user.city) cities.add(slugifyCity(user.city));
+      }
+      for (const citySlug of cities) {
+        if (!citySlug) continue;
+        urls.push({
+          url: `${base}/cities/${citySlug}`,
+          lastModified: now,
+          changeFrequency: "weekly",
+          priority: PRIORITY.hub,
+        });
+      }
+    }
+  } catch {
+    // If the API is unreachable, still return the static pages above.
+  }
 
-  // Return the correct structure for the sitemap
-  // return urls.map(({ url, lastModified, changeFrequency, priority }) => ({
-  //   loc: url,
-  //   lastmod: lastModified.toISOString(),
-  //   changefreq: changeFrequency,
-  //   priority,
-  // }));
+  return urls;
 }

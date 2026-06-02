@@ -12,6 +12,7 @@ import Link from "next/link";
 import { FaLinkedin } from "react-icons/fa6";
 import { FYCAvatar, tintForKey, AVATAR_KIND_KEYS } from "./humaaans";
 import { SKILL_TINT } from "@/app/utils/constants";
+import { slugifyCity } from "@/lib/utils";
 
 function avatarKindFor(key = "") {
   let hash = 0;
@@ -73,7 +74,9 @@ export const Card = ({ user, idx = 0 }) => {
           </div>
 
           <div className={`relative flex-1 px-6 pt-5 flex justify-center items-end overflow-hidden ${TINT_BG[tint]}`}>
-            <FYCAvatar kind={kind} color={tint} size={150} />
+            <div aria-hidden="true">
+              <FYCAvatar kind={kind} color={tint} size={150} />
+            </div>
             {typeof user.clicks === "number" && (
               <div className="absolute top-4 left-5 font-mono text-[11px] tracking-[0.1em] uppercase text-ink">
                 {user.clicks} clicks
@@ -83,9 +86,10 @@ export const Card = ({ user, idx = 0 }) => {
               <Link
                 href={user.linkedin}
                 target="_blank"
+                rel="nofollow ugc noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="absolute top-3 right-4 z-20 text-ink hover:text-linkedIn transition-colors"
-                aria-label="LinkedIn"
+                aria-label={`${fullName || "Founder"} on LinkedIn`}
               >
                 <FaLinkedin size={18} />
               </Link>
@@ -98,14 +102,16 @@ export const Card = ({ user, idx = 0 }) => {
             </div>
             <div className="flex gap-1.5 flex-wrap items-center">
               {user.skills?.slice(0, 3).map((skill) => (
-                <span
+                <Link
                   key={skill}
-                  className={`text-[11.5px] font-medium px-2.5 py-1 rounded-full ${
+                  href={`/skills/${skill.toLowerCase()}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className={`relative z-20 text-[11.5px] font-medium px-2.5 py-1 rounded-full ${
                     SKILL_TINT[skill] || "bg-bg-soft text-ink-2 border border-rule"
                   }`}
                 >
                   {skill}
-                </span>
+                </Link>
               ))}
               <span className="ml-auto font-mono text-[11px] text-muted">
                 {formatInvestment(user.invest)}
