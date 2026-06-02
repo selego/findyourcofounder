@@ -1,5 +1,13 @@
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
+import { getLanguageAlternates } from "@/app/utils/constants";
+
+export const metadata = {
+  title: "Privacy & GDPR",
+  description:
+    "How findyourcofounder collects, stores, and processes personal data, and the rights you have as a user under GDPR.",
+  alternates: { canonical: "/gdpr", languages: getLanguageAlternates("/gdpr") },
+};
 
 export default async function Gdpr() {
   return (
