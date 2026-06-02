@@ -26,7 +26,8 @@ export const authOptions = {
           user = { ...user, token }; // add token to user
           return user;
         } catch (error) {
-          return error;
+          console.error("[fyc] /signin authorize threw", error?.message);
+          return null;
         }
       },
     }),
