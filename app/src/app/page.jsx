@@ -36,14 +36,19 @@ export default async function Home({ searchParams }) {
 
   const getUsers = async () => {
     try {
-      const { ok, data } = await httpService.post(`/search?timestamp=${new Date().getTime()}`, {
+      const response = await httpService.post(`/search?timestamp=${new Date().getTime()}`, {
         search: searchParams.search,
         page: currentPage,
         per_page: itemsPerPage,
       });
-      if (!ok) return { message: "Error fetching users", users: [], total: 0 };
+      const { ok, data } = response;
+      if (!ok) {
+        console.error("[fyc] homepage /search returned ok=false", { response });
+        return { message: "Error fetching users", users: [], total: 0 };
+      }
       return { users: data.users, total: data.total };
     } catch (e) {
+      console.error("[fyc] homepage /search threw", e?.message, e?.cause);
       return { users: [], total: 0 };
     }
   };
