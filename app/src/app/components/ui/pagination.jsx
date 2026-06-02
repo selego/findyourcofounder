@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -86,6 +86,7 @@ PaginationEllipsis.displayName = "PaginationEllipsis";
 const PaginationWrapper = ({ currentPage = 1, totalItems = 0, itemsPerPage = 50, className, ...props }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -98,7 +99,7 @@ const PaginationWrapper = ({ currentPage = 1, totalItems = 0, itemsPerPage = 50,
     }
 
     const queryString = params.toString();
-    const newUrl = queryString ? `/?${queryString}` : "/";
+    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
     router.push(newUrl);
   };
 
