@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { AuthShell } from "@/app/components/auth-shell";
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const hasError = searchParams.get("error") === "CredentialsSignin";
 
   useEffect(() => {
     if (status === "authenticated") router.replace("/profile");
@@ -53,6 +55,15 @@ export default function SignInPage() {
       }
     >
       <form className="space-y-5" onSubmit={onSubmit}>
+        {hasError && (
+          <div
+            role="alert"
+            className="rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3 text-sm text-ink"
+          >
+            Email or password is incorrect.
+          </div>
+        )}
+
         <FieldShell label="Email">
           <input
             type="email"
