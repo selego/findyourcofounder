@@ -29,6 +29,12 @@ html.lenis body {
    ────────────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
+    /* Font-family variables for fonts loaded via @fontsource packages.
+       Tailwind's fontFamily entries reference these (see tailwind.config.js). */
+    --font-bricolage: "Bricolage Grotesque Variable";
+    --font-instrument: "Instrument Serif";
+    --font-jetbrains: "JetBrains Mono Variable";
+
     /* Raw tokens — handy for arbitrary values: bg-[var(--fyc-accent)] */
     --fyc-bg: #f4f1ea;
     --fyc-bg-soft: #ebe6da;

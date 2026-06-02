@@ -1,5 +1,8 @@
 import "./globals.css";
-import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource-variable/jetbrains-mono";
 import { GeistSans } from "geist/font/sans";
 import { getServerSession } from "next-auth/next";
 import Script from "next/script";
@@ -21,32 +24,12 @@ import { JsonLd } from "./components/json-ld";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-// FYC typography — Geist (body, via official `geist` package since this Next
-// version's google-fonts list predates Geist's Google Fonts release),
-// Bricolage Grotesque (display headlines), Instrument Serif (italic accents),
-// JetBrains Mono (small uppercase labels).
-// GeistSans already exposes a CSS variable on its `.variable` class.
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const instrument = Instrument_Serif({
-  subsets: ["latin"],
-  variable: "--font-instrument",
-  weight: "400",
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
+// FYC typography — Geist (body, via the official `geist` package).
+// Bricolage Grotesque (display), Instrument Serif (italic accents), and
+// JetBrains Mono (small uppercase labels) ship as self-hosted woff2 via
+// @fontsource packages so the build never depends on Google Fonts. The
+// CSS variables `--font-bricolage`, `--font-instrument`, `--font-jetbrains`
+// are defined in globals.css.
 
 const APP_COUNTRY = process.env.APP_COUNTRY ?? "nl";
 const SITE_URL = getSiteUrl(APP_COUNTRY);
@@ -142,7 +125,7 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en" className={`${GeistSans.variable} ${bricolage.variable} ${instrument.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={GeistSans.variable}>
       <body className="font-sans">
         <JsonLd data={organizationLd} />
         <JsonLd data={websiteLd} />
