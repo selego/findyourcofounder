@@ -122,28 +122,28 @@ export const Card = ({ user, idx = 0 }) => {
 
         {/* ── BACK ─────────────────────────────────────────────────── */}
         <div
-          className="absolute inset-0 rounded-[22px] bg-ink text-primary-ink p-6 flex flex-col gap-4 shadow-card"
+          className={`absolute inset-0 rounded-[22px] border-[1.5px] border-ink ${TINT_BG[tint]} text-ink p-6 flex flex-col gap-4 shadow-card`}
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-          <div className="flex justify-between items-center font-mono text-[11px] tracking-[0.1em] uppercase text-accent-2">
+          <div className="flex justify-between items-center font-mono text-[11px] tracking-[0.1em] uppercase text-ink/70">
             <span>What motivates them</span>
             <span className="truncate max-w-[50%]">{user.city}</span>
           </div>
 
-          <p className="font-serif italic text-[22px] leading-snug flex-1 text-primary-ink line-clamp-[7]">
+          <p className="font-serif italic text-[22px] leading-snug flex-1 text-ink line-clamp-[7]">
             &ldquo;{motivation.length > 200 ? `${motivation.slice(0, 200)}…` : motivation}&rdquo;
           </p>
 
-          <div className="pt-4 border-t border-primary-ink/20 flex justify-between items-center">
+          <div className="pt-4 border-t border-ink/20 flex justify-between items-center">
             <div className="min-w-0">
               <div className="font-display font-bold text-lg tracking-tight truncate">{fullName || "Anonymous"}</div>
-              <div className="text-xs text-primary-ink/60 mt-0.5 truncate">{user.skills?.join(" · ")}</div>
+              <div className="text-xs text-ink/60 mt-0.5 truncate">{user.skills?.join(" · ")}</div>
             </div>
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-accent text-accent-ink text-[12.5px] font-semibold whitespace-nowrap">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-ink text-primary-ink text-[12.5px] font-semibold whitespace-nowrap">
               Open profile <span className="font-serif italic">↗</span>
             </span>
           </div>
