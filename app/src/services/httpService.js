@@ -2,6 +2,24 @@ import { APP_COUNTRY } from "@/app/config";
 
 import { SERVER_BASE_URL } from "@/app/utils/constants";
 
+async function parseResponse(response, url) {
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error(
+      "[fyc] httpService non-JSON response",
+      JSON.stringify({
+        url,
+        status: response.status,
+        contentType: response.headers.get("content-type"),
+        bodyPreview: text.slice(0, 300),
+      }),
+    );
+    throw e;
+  }
+}
+
 class Api {
   ROOT_URL = "";
   headers = {
@@ -23,40 +41,44 @@ class Api {
   }
 
   async get(url) {
-    const headers = this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, {
-      headers,
+    const fullUrl = `${this.ROOT_URL}${url}`;
+    const response = await fetch(fullUrl, {
+      headers: this.getHeaders(),
       credentials: "include",
-    }).then((response) => response.json());
+    });
+    return parseResponse(response, fullUrl);
   }
 
   async post(url, data, headers) {
-    const finalHeaders = headers ?? this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, {
+    const fullUrl = `${this.ROOT_URL}${url}`;
+    const response = await fetch(fullUrl, {
       method: "POST",
       body: JSON.stringify(data),
-      headers: finalHeaders,
+      headers: headers ?? this.getHeaders(),
       credentials: "include",
-    }).then((response) => response.json());
+    });
+    return parseResponse(response, fullUrl);
   }
 
   async put(url, data, headers) {
-    const finalHeaders = headers ?? this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, {
+    const fullUrl = `${this.ROOT_URL}${url}`;
+    const response = await fetch(fullUrl, {
       method: "PUT",
       body: JSON.stringify(data),
-      headers: finalHeaders,
+      headers: headers ?? this.getHeaders(),
       credentials: "include",
-    }).then((response) => response.json());
+    });
+    return parseResponse(response, fullUrl);
   }
 
   async delete(url, headers) {
-    const finalHeaders = headers ?? this.getHeaders();
-    return fetch(`${this.ROOT_URL}${url}`, {
+    const fullUrl = `${this.ROOT_URL}${url}`;
+    const response = await fetch(fullUrl, {
       method: "DELETE",
-      headers: finalHeaders,
+      headers: headers ?? this.getHeaders(),
       credentials: "include",
-    }).then((response) => response.json());
+    });
+    return parseResponse(response, fullUrl);
   }
 }
 
