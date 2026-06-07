@@ -9,7 +9,7 @@ const UserObject = require("../models/cofounder");
 
 const config = require("../config");
 const { validatePassword, uploadToS3FromBuffer } = require("../utils");
-const { SENDINBLUE_TEMPLATES } = require("../utils/constants");
+const { BREVO_TEMPLATES } = require("../utils/constants");
 const ERROR_CODES = require("../utils/errorCodes");
 
 const sendinblue = require("../services/brevo");
@@ -130,7 +130,7 @@ router.post("/forgot_password", async (req, res) => {
     obj.set({ forgot_password_reset_token: token, forgot_password_reset_expires: Date.now() + 7200000 }); //2h
     await obj.save();
 
-    await sendinblue.sendTemplate(SENDINBLUE_TEMPLATES.FORGOT_PASSWORD, {
+    await sendinblue.sendTemplate(BREVO_TEMPLATES.FORGOT_PASSWORD, {
       emailTo: [{ email: obj.email }],
       params: { cta: `${config.APP_URL}/reset-password?token=${token}` },
     });
@@ -290,6 +290,43 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     capture(error);
     res.status(500).send({ ok: false, code: ERROR_CODES.SERVER_ERROR, error });
+  }
+});
+
+router.post("/:id/intro", async (req, res) => {
+  try {
+    const { sender_id, message } = req.body;
+    if (!sender_id || !message?.trim()) {
+      return res.status(400).send({ ok: false, code: ERROR_CODES.INVALID_BODY });
+    }
+
+    const [recipient, sender] = await Promise.all([
+      UserObject.findById(req.params.id),
+      UserObject.findById(sender_id),
+    ]);
+    if (!recipient || !sender) return res.status(404).send({ ok: false, code: ERROR_CODES.USER_NOT_EXISTS });
+
+    const senderName = `${sender.first_name ?? ""} ${sender.last_name ?? ""}`.trim();
+    const recipientName = `${recipient.first_name ?? ""} ${recipient.last_name ?? ""}`.trim();
+
+    await sendinblue.sendTemplate(BREVO_TEMPLATES.INTRO, {
+      emailTo: [{ email: recipient.email, name: recipientName }],
+      replyTo: { email: sender.email, name: senderName },
+      params: {
+        sender_name: senderName,
+        sender_email: sender.email,
+        sender_city: sender.city || "",
+        sender_skills: (sender.skills || []).join(", "),
+        sender_profile_url: `${config.APP_URL}/contact/${sender.slug}`,
+        recipient_first_name: recipient.first_name || recipientName,
+        message: message.trim(),
+      },
+    });
+
+    return res.status(200).send({ ok: true });
+  } catch (error) {
+    capture(error);
+    return res.status(500).send({ ok: false, code: ERROR_CODES.SERVER_ERROR });
   }
 });
 

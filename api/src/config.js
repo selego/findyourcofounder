@@ -6,7 +6,7 @@ const SECRET = process.env.SECRET || "not-so-secret";
 const APP_URL = ENVIRONMENT === "production" ? "https://findyourcofounder.nl/" : "http://localhost:3000";
 const SENTRY_DSN = process.env.SENTRY_DSN || "";
 
-const SENDINBLUE_API_KEY = "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";
+const BREVO_KEY = process.env.BREVO_KEY || "";
 
 const CONFIG = {
   ENVIRONMENT,
@@ -15,7 +15,7 @@ const CONFIG = {
   SECRET,
   APP_URL,
   SENTRY_DSN,
-  SENDINBLUE_API_KEY,
+  BREVO_KEY,
 };
 
 if (ENVIRONMENT === "development") console.log(CONFIG);

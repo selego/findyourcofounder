@@ -7,7 +7,7 @@ Sentry.init({
   enabled: process.env.NODE_ENV === "production",
   environment: process.env.NODE_ENV,
   integrations: [
-    new Sentry.Replay({
+    Sentry.replayIntegration({
       maskAllText: false,
       blockAllMedia: false,
       maskAllInputs: true,

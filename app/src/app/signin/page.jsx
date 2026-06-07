@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -9,14 +9,17 @@ import { AuthShell } from "@/app/components/auth-shell";
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const destination = callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/profile";
   const { status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/profile");
-  }, [status, router]);
+    if (status === "authenticated") router.replace(destination);
+  }, [status, router, destination]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +35,7 @@ export default function SignInPage() {
       toast.error("Email or password is incorrect.");
       return;
     }
-    if (result?.ok) router.push("/profile");
+    if (result?.ok) router.push(destination);
   };
 
   return (

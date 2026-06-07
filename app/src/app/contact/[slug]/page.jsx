@@ -352,6 +352,7 @@ export default async function Contact({ params }) {
 
         {/* ── Send a coffee ─────────────────────────────────────────── */}
         <CoffeeBlock
+          recipientId={data._id}
           name={data.first_name}
           intro="Free to send. We don't intermediate — your note lands in their inbox. Be specific about what caught their eye."
           openers={openers}
