@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const { SENDINBLUE_API_KEY, ENVIRONMENT } = require("../config");
+const { BREVO_KEY, ENVIRONMENT } = require("../config");
 
 const SENDER_NAME = "Your Name";
 const SENDER_NAME_SMS = "Your Name";
@@ -10,8 +10,8 @@ const regexp_exception_staging = /selego\.co/;
 
 const api = async (path, options = {}) => {
   try {
-    if (!SENDINBLUE_API_KEY) {
-      console.log("NO SENDINBLUE KEY");
+    if (!BREVO_KEY) {
+      console.log("NO BREVO KEY");
       console.log(options);
       return console.log("Mail was not sent.");
     }
@@ -21,7 +21,7 @@ const api = async (path, options = {}) => {
       retries: 3,
       retryDelay: 1000,
       retryOn: [502, 503, 504],
-      headers: { "api-key": SENDINBLUE_API_KEY, "Content-Type": "application/json", ...(options.headers || {}) },
+      headers: { "api-key": BREVO_KEY, "Content-Type": "application/json", ...(options.headers || {}) },
     });
     const contentType = res.headers.raw()["content-type"];
     if (contentType && contentType.length && contentType[0].includes("application/json")) return await res.json();
@@ -93,7 +93,7 @@ async function sendEmail(to, subject, htmlContent, { params, attachment, cc, bcc
 }
 
 // https://developers.brevo.com/reference/sendtransacemail
-async function sendTemplate(id, { params, emailTo, cc, bcc, attachment } = {}, { force } = { force: false }) {
+async function sendTemplate(id, { params, emailTo, cc, bcc, attachment, replyTo } = {}, { force } = { force: false }) {
   try {
     if (!id) throw new Error("No template id provided");
 
@@ -109,6 +109,7 @@ async function sendTemplate(id, { params, emailTo, cc, bcc, attachment } = {}, {
     if (bcc?.length) body.bcc = bcc;
     if (params) body.params = params;
     if (attachment) body.attachment = attachment;
+    if (replyTo) body.replyTo = replyTo;
     const mail = await api("/smtp/email", { method: "POST", body: JSON.stringify(body) });
 
     if (!mail || mail?.code) {

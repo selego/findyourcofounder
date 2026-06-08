@@ -2,15 +2,13 @@
 
 // Client-side pieces of the founder profile page:
 //   • <ProfileClickPing /> — fire-and-forget bump of the click counter on mount.
-//     Previously this lived in the (now-removed) card modal; the equivalent
-//     user action is now "opened the full profile page."
-//   • <CoffeeBlock />     — the "Send a coffee" dark section, including the
-//     openers (left column) and the textarea (right column). Single client
-//     component so an opener click can populate the textarea state. The send
-//     handler is a toast for now — wire to a real /messages endpoint when it
-//     ships.
+//   • <CoffeeBlock />     — the "Send a coffee" section. On submit, hits
+//     POST /:id/intro which fires the Brevo INTRO template to the recipient
+//     with the sender's contact info as reply-to. Sign-in required.
 
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { httpService } from "@/services/httpService";
 
@@ -36,19 +34,41 @@ export function ProfileClickPing({ user }) {
 
 const MAX = 600;
 
-export function CoffeeBlock({ name, intro, openers }) {
+export function CoffeeBlock({ recipientId, name, intro, openers }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
+    if (status !== "authenticated") {
+      router.push(`/signin?callbackUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+    const senderId = session?.user?._id;
+    if (!senderId || !recipientId) {
+      toast.error("Couldn't send — try again in a moment.");
+      return;
+    }
     setSubmitting(true);
-    setTimeout(() => {
-      toast.success(
-        "Direct messaging is coming soon — your note will reach them then."
-      );
+    try {
+      const { ok } = await httpService.post(`/${recipientId}/intro`, {
+        sender_id: senderId,
+        message: note,
+      });
+      if (!ok) {
+        toast.error("Couldn't send the note. Try again?");
+        return;
+      }
+      toast.success(`Sent — ${name} will see it in their inbox.`);
+      setNote("");
+    } catch {
+      toast.error("Couldn't send the note. Try again?");
+    } finally {
       setSubmitting(false);
-    }, 250);
+    }
   };
 
   return (

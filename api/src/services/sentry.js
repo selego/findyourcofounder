@@ -1,5 +1,4 @@
 const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
 const { ENVIRONMENT, SENTRY_DSN } = require("../config");
 
 function initSentry(app) {
@@ -7,7 +6,7 @@ function initSentry(app) {
     Sentry.init({
       dsn: SENTRY_DSN,
       environment: "server",
-      integrations: [new Sentry.Integrations.Http({ tracing: true }), new Tracing.Integrations.Express({ app })],
+      integrations: [new Sentry.Integrations.Http({ tracing: true }), new Sentry.Integrations.Express({ app })],
       tracesSampleRate: 1.0,
     });
 
