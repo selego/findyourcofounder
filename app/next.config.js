@@ -11,7 +11,20 @@ const SECURITY_HEADERS = [
   },
 ];
 
+const API_HOST =
+  process.env.NODE_ENV === "production"
+    ? "https://api-cofounder.cleverapps.io/cofounder"
+    : "http://localhost:8080";
+
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/newsletter/unsubscribe",
+        destination: `${API_HOST}/newsletter/unsubscribe`,
+      },
+    ];
+  },
   async headers() {
     return [
       {

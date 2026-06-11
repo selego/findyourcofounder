@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
+const cron = require("node-cron");
 const { initSentry, setupErrorHandler } = require("./services/sentry");
 const { PORT, ENVIRONMENT, APP_URL } = require("./config");
 
@@ -79,6 +80,19 @@ app.get("/", async (req, res) => {
 app.use("/user", require("./controllers/user"));
 app.use("/file", require("./controllers/file"));
 app.use("/cofounder", require("./controllers/cofounder"));
+app.use("/newsletter", require("./controllers/newsletter"));
+
+if (ENVIRONMENT === "production") {
+  const { runWeeklyDigest } = require("./jobs/weekly-digest");
+  cron.schedule(
+    "0 9 * * 2",
+    () => {
+      runWeeklyDigest().catch((e) => console.error("[digest] cron run threw", e));
+    },
+    { timezone: "Europe/Paris" },
+  );
+  console.log("[digest] cron scheduled — Tuesdays 09:00 Europe/Paris");
+}
 
 setupErrorHandler(app);
 require("./services/passport")(app);
