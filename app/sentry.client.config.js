@@ -6,14 +6,5 @@ Sentry.init({
   dsn: SENTRY_DSN,
   enabled: process.env.NODE_ENV === "production",
   environment: process.env.NODE_ENV,
-  integrations: [
-    Sentry.replayIntegration({
-      maskAllText: false,
-      blockAllMedia: false,
-      maskAllInputs: true,
-    }),
-  ],
   tracesSampleRate: 0.2,
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
 });
