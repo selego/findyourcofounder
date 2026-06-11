@@ -19,6 +19,12 @@ export const metadata = {
   },
 };
 
+function titleCaseCity(city) {
+  return city
+    .toLowerCase()
+    .replace(/(^|[\s\-'])(\p{L})/gu, (_, sep, ch) => sep + ch.toUpperCase());
+}
+
 async function getCityCounts() {
   try {
     const { ok, data } = await httpService.post(
@@ -26,15 +32,18 @@ async function getCityCounts() {
       { per_page: 1000 },
     );
     if (!ok) return [];
-    const counts = new Map();
+    const groups = new Map();
     for (const u of data?.users || []) {
-      const city = (u.city || "").trim();
-      if (!city) continue;
-      counts.set(city, (counts.get(city) || 0) + 1);
+      const raw = (u.city || "").trim();
+      if (!raw) continue;
+      const key = raw.toLocaleLowerCase();
+      const existing = groups.get(key);
+      if (existing) existing.count += 1;
+      else groups.set(key, { city: titleCaseCity(raw), count: 1 });
     }
-    return Array.from(counts.entries())
-      .map(([city, count]) => ({ city, count }))
-      .sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
+    return Array.from(groups.values()).sort(
+      (a, b) => b.count - a.count || a.city.localeCompare(b.city),
+    );
   } catch {
     return [];
   }
