@@ -35,6 +35,9 @@ const Schema = new mongoose.Schema({
   invites_sent: { type: Number, default: 0 },
   invites_accepted: { type: Number, default: 0 },
 
+  digest_unsubscribed_at: { type: Date, default: null, index: true },
+  digest_last_sent_at: { type: Date, default: null },
+
   deleted_at: { type: Date },
 });
 

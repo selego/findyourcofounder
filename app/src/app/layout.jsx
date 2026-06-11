@@ -12,6 +12,7 @@ import { Footer } from "./components/footer";
 import { SmoothScroll } from "./components/smooth-scroll";
 import { AnalyticsScripts } from "./components/analytics-scripts";
 import { ConsentBanner } from "./components/consent-banner";
+import { NewsletterPopup } from "./components/newsletter-popup";
 
 import Provider from "./auth-provider";
 import { authOptions } from "./api/auth/[...nextauth]/route";
@@ -142,6 +143,7 @@ export default async function RootLayout({ children }) {
           </SmoothScroll>
         </Provider>
         <ConsentBanner />
+        <NewsletterPopup />
       </body>
     </html>
   );

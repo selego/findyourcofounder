@@ -3,6 +3,7 @@
 // for routes that don't exist yet; swap them in as those pages ship.
 
 import Link from "next/link";
+import { NewsletterFooter } from "./newsletter-footer";
 
 const COLUMNS = [
   {
@@ -67,6 +68,7 @@ export const Footer = () => {
               A small Dutch index for founders looking for a cofounder. Built by
               founders, in Amsterdam, with care.
             </p>
+            <NewsletterFooter />
           </div>
 
           {COLUMNS.map((col) => (
