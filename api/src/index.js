@@ -80,7 +80,7 @@ app.get("/", async (req, res) => {
 app.use("/user", require("./controllers/user"));
 app.use("/file", require("./controllers/file"));
 app.use("/cofounder", require("./controllers/cofounder"));
-app.use("/newsletter", require("./controllers/newsletter"));
+app.use("/cofounder/newsletter", require("./controllers/newsletter"));
 
 if (ENVIRONMENT === "production") {
   const { runWeeklyDigest } = require("./jobs/weekly-digest");
