@@ -56,7 +56,7 @@ router.post("/signin", async (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     const obj = {};
-    const { password, email, first_name, last_name, city, linkedin, motivations, business, partner, blocker, skills, invest, invited_by } =
+    const { password, email, first_name, last_name, city, country, linkedin, motivations, business, partner, blocker, skills, invest, invited_by } =
       req.body;
     if (req.headers["app-country"]) {
       obj.app_country = req.headers["app-country"];
@@ -68,6 +68,7 @@ router.post("/signup", async (req, res) => {
     obj.first_name = first_name;
     obj.last_name = last_name;
     obj.city = city;
+    obj.country = country;
     obj.linkedin = linkedin;
     obj.motivations = motivations;
     obj.business = business;

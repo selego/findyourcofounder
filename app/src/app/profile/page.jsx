@@ -12,6 +12,7 @@ import { signOut, useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 
 import { Card } from "@/app/components/card";
+import { CitySelect } from "@/app/components/city-select";
 import { httpService } from "@/services/httpService";
 import { SKILL_TINT } from "@/app/utils/constants";
 
@@ -225,7 +226,14 @@ const UserForm = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="City" name="city" value={values.city} onChange={handleInputChange} required />
+        <div>
+          <Label>City</Label>
+          <CitySelect
+            value={{ city: values.city, country: values.country }}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
         <Field
           label="LinkedIn"
           name="linkedin"

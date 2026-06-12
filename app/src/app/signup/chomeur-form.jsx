@@ -14,6 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { httpService } from "@/services/httpService";
 import { SKILL_TINT } from "@/app/utils/constants";
+import { CitySelect } from "@/app/components/city-select";
 
 const SKILLS = ["Business", "Design", "Marketing", "Product", "Tech"];
 
@@ -229,12 +230,9 @@ function StepIdentity({ values, onChange, onNext }) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="City">
-          <input
-            name="city"
-            type="text"
-            value={values.city || ""}
+          <CitySelect
+            value={{ city: values.city, country: values.country }}
             onChange={onChange}
-            pattern="[A-Za-zÜ-ü\s\-]{1,50}"
             required
           />
         </Field>

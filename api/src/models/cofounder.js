@@ -14,6 +14,7 @@ const Schema = new mongoose.Schema({
   forgot_password_reset_expires: Date,
 
   city: { type: String, trim: true },
+  country: { type: String, trim: true },
   skills: { type: [String], default: [] },
   invest: { type: Number },
   jobless_date: { type: Date },
